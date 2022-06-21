@@ -3,24 +3,60 @@ function onOpen() {
 }
 
 function submenu_01_HePaNumberingBasic() {
+
+  var activeStyle = getHeadingStyle();
+  console.log(activeStyle.value);
+  console.log(activeStyle.marker);
+  console.log(activeStyle.prefix);
+  console.log(activeStyle.prefixMarker);
+
+  const subMenuPrefixes = DocumentApp.getUi().createMenu('Select H1 prefix');
+  let selectedPrefixMarker = '';
+  for (let prefix in prefixes) {
+    if (prefix.toString() == activeStyle.prefix) {
+      selectedPrefixMarker = activeStyle.prefixMarker;
+    } else {
+      selectedPrefixMarker = '';
+    }
+    subMenuPrefixes.addItem(prefixes[prefix]['name'] + ' ' + selectedPrefixMarker, prefixes[prefix]['func']);
+  }
+
+  // Select style submenu
+  const subMenuStyles = DocumentApp.getUi().createMenu('Select style')
+    .addItem('Show current style', 'showCurrentStyle');
+  let selectedStyleMarker = '';
+  let menuItemText;
+  for (let styleName in headingStyles) {
+    menuItemText = headingStyles[styleName]['name'];
+    if (styleName.toString() == activeStyle.value) {
+      selectedStyleMarker = activeStyle.marker;
+    } else {
+      selectedStyleMarker = '';
+    }
+    if (headingStyles[styleName]['separatorAbove'] === true) {
+      subMenuStyles.addSeparator();
+    }
+    if (headingStyles[styleName]['replacePrefix'] === true) {
+      menuItemText = menuItemText.replace('~PREFIX~', activeStyle.prefixText);
+    }    
+    subMenuStyles.addItem( menuItemText + ' ' + selectedStyleMarker, styleName);
+    if (headingStyles[styleName]['subMenuBelow'] === true) {
+      subMenuStyles.addSubMenu(subMenuPrefixes);
+    }
+  }
+  // End. Select style submenu
+
   return DocumentApp.getUi().createMenu('Heading & paragraph numbering')
     .addItem('nha Add/update heading numbers and links', 'doNumberHeadingsAndLinks')
     .addSubMenu(DocumentApp.getUi().createMenu('Utilities')
       .addItem('Add/update heading numbers only', 'doNumberHeadings')
       .addItem('Update numbers in links to headings', 'updateNumbersInLinksToHeadings')
-      // Elena:
       .addItem('Reset full link text in links to headings', 'resetFullLinkTextInLinksToHeadings')
       .addSeparator()
-      // Elena:
       .addItem('Mark internal heading links', 'markInternalHeadingLinks')
-                /*
-                Elena:
-                Similar to the broken links with BZotero, show a message: 
-                There were broken links. Please search for BROKEN_INTERNAL_LINK_MARKER and fix these. Note that broken links can occur when you press enter at the start of an existing heading./['
-                */
       .addItem('Clear internal heading link markers', 'clearInternalLinkMarkers')
       .addSeparator()
-      .addItem('Show current style', 'sorryNotImplementedYet')
+      .addItem('Show current style', 'showCurrentStyle')
       .addSeparator()
       .addItem('nhprefix prefix all headings with a string', 'prefixHeadings')
       .addSeparator()
@@ -33,8 +69,11 @@ function submenu_01_HePaNumberingBasic() {
       .addItem('nhnr4 Remove heading numbers (H1-4)', 'numberHeadingsClear4')
       .addItem('nhnr3 Remove heading numbers (H1-3)', 'numberHeadingsClear3')
     )
+
+    .addSubMenu(subMenuStyles)
+/*
     .addSubMenu(DocumentApp.getUi().createMenu('Select style')
-      .addItem('Show current style', 'sorryNotImplementedYet')
+      .addItem('Show current style', 'showCurrentStyle')
       .addSeparator()
       .addItem('H1-3 (update links)', 'numberHeadingsAdd3WithLinks') // <- DEFAULT
       .addItem('H1-3/-/-/figure (update links)', 'numberHeadingsAdd3Figure')
@@ -62,7 +101,7 @@ function submenu_01_HePaNumberingBasic() {
       .addItem('H1-4 (keep links)', 'numberHeadingsAddPartial4')
       .addItem('H1-6 (keep links)', 'numberHeadingsAdd6')
       // .addItem('e='+email, 'numberHeadingsAddPartial')
-    )
+    ) */
   //.addSubMenu(DocumentApp.getUi().createMenu('Useful')
   //)
 };

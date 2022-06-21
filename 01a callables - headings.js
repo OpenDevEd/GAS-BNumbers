@@ -1,14 +1,60 @@
 var style = ['1', '1', '1', '1', '1', '1'];
 
 // Default:
-var headingStyle = getDocumentPropertyString("BNumbers_HeadingStyle_Property") || "numberHeadingsAdd3Figure";
+function getHeadingStyle() {
+  //getDocumentPropertyString("BNumbers_HeadingStyle_Property") || "numberHeadingsAdd3Figure";
+  var headingStyle = { value: "numberHeadingsAdd3Figure", marker: "", prefix: "None", prefixMarker: "", prefixText:prefixes["None"]["name"]};
+  try {
+    var BNumbers_HeadingStyle_Property = getDocumentPropertyString("BNumbers_HeadingStyle_Property");
+    if (BNumbers_HeadingStyle_Property != null) {
+      headingStyle.value = BNumbers_HeadingStyle_Property;
+      headingStyle.marker = "🟢";
+      Logger.log('The Doc has style');
+    } else {
+      headingStyle.marker = "◯";
+    }
+    Logger.log(' updateStyle()2');
 
-console.log("Default style: " + headingStyle);
+    var BNumbers_Prefix_Property = getDocumentPropertyString("BNumbers_Prefix_Property");
+    if (BNumbers_Prefix_Property != null) {
+      headingStyle.prefix = BNumbers_Prefix_Property;
+      headingStyle.prefixMarker = "🟢";
+      Logger.log('The Doc has prefix');
 
+      if (BNumbers_Prefix_Property == 'Custom'){
+        Logger.log('Custom prefix!');
+        var BNumbers_Custom_Prefix_Property = getDocumentPropertyString("BNumbers_Custom_Prefix_Property");
+        if (BNumbers_Custom_Prefix_Property != null){
+          headingStyle.prefixText = BNumbers_Custom_Prefix_Property;
+        }
+      }else{
+        headingStyle.prefixText = prefixes[BNumbers_Prefix_Property]["name"];
+      }
+
+    } else {
+      headingStyle.prefixMarker = "◯";
+    }
+    Logger.log(' updateStyle()2');
+
+  }
+  catch (error) {
+    // headingStyle.marker = "x2";
+    // headingStyle.prefixMarker = "x21";
+    Logger.log(' updateStyle() error' + error);
+  }
+  return headingStyle;
+}
+
+function savePrefixToDocumentProperty(prefix) {
+  setDocumentPropertyString("BNumbers_Prefix_Property", prefix)
+  console.log("Setting prefix")
+  onOpen();
+}
 
 function saveHeadingStyleToDocumentProperty(headingstyle) {
   setDocumentPropertyString("BNumbers_HeadingStyle_Property", headingstyle)
   console.log("Setting style")
+  onOpen();
 }
 
 function getHeadingStyleToDocumentProperty() {
@@ -16,7 +62,9 @@ function getHeadingStyleToDocumentProperty() {
 }
 
 function doNumberHeadings() {
-  eval(headingStyle)(true);
+
+
+  eval(getHeadingStyle().value)(true);
 }
 
 function doNumberHeadingsAndLinks() {
@@ -28,7 +76,7 @@ function doNumberHeadingsAndLinks() {
   doNumberHeadings();
 
   DocumentApp.getActiveDocument().saveAndClose();
-  
+
   updateNumbersInLinksToHeadings();
 }
 
@@ -78,7 +126,8 @@ function numberHeadingsAdd4Figure(run) {
 
 // 'H1-3 (update links)'
 function numberHeadingsAdd3WithLinks(run) {
-  headingStyle = numberHeadingsAdd3Figure.name;
+  headingStyle = numberHeadingsAdd3WithLinks.name;
+  //headingStyle = numberHeadingsAdd3Figure.name;
   saveHeadingStyleToDocumentProperty(headingStyle);
   if (run) {
     var xstyle = ['1', '1', '1', '-', '-', '-'];
@@ -101,10 +150,10 @@ function numberHeadingsAdd3Figure(run) {
 function updateFigureNumbers(run) {
   headingStyle = updateFigureNumbers.name;
   saveHeadingStyleToDocumentProperty(headingStyle);
-  if (run) {
-    var xstyle = ['', '', '', '', '', 'figure'];
-    numberHeadings(true, false, -1, xstyle);
-  }
+  //if (run) {
+  var xstyle = ['', '', '', '', '', 'figure'];
+  numberHeadings(true, false, -1, xstyle);
+  //}
 };
 
 // OBSOLETE
@@ -124,9 +173,13 @@ function numberHeadingsAddTeilFigure11pickGerman(run) {
 
 // First heading number is determined from first H1 heading.
 //function numberHeadingsAddTeilFigure11pick(run) {
-function numberHeadingsAddChapter234() {
+function numberHeadingsAddChapter234(run) {
   headingStyle = numberHeadingsAddChapter234.name;
   saveHeadingStyleToDocumentProperty(headingStyle);
+
+  const headingPrefixStyle = getHeadingStyle();
+  const SELECTED_PREFIX = headingPrefixStyle.prefixText;
+
   if (run) {
     var xstyle = ['1#', '1', '1', '1', '-', '-'];
     // Elena:
@@ -138,6 +191,10 @@ function numberHeadingsAddChapter234() {
 function numberHeadingsAddChapter23(run) {
   headingStyle = numberHeadingsAddChapter23.name;
   saveHeadingStyleToDocumentProperty(headingStyle);
+
+  const headingPrefixStyle = getHeadingStyle();
+  const SELECTED_PREFIX = headingPrefixStyle.prefixText;
+
   if (run) {
     var xstyle = ['1#', '1', '1', '-', '-', '-'];
     var prefixlead = [SELECTED_PREFIX, null, null, null, null, 'Figure '];
