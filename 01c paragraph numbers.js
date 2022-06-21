@@ -42,8 +42,8 @@ function sequentialNumbers(add,addSen,numberstyle){
   var doc = DocumentApp.getActiveDocument();
   var body = doc.getBody();
   // use getParagraphs with false: If there's a selection, the selection will be numbered, otherwise the whole doc.
-  var p = getParagraphs(false);
-  // var p = body.getParagraphs();
+  // var p = getParagraphs(false); -> getParagraphsInBodyAndFootnotesExtended(onePara,getBodyParas,getFootnoteParas) {
+  var p = body.getParagraphs();
   var result = "";
   if (numberstyle==-1) {
     result = getValueFromUser('Please enter prefix:');
@@ -266,7 +266,8 @@ function sequentialNumbersPlus(add,addSen,numberstyle){
   var doc = DocumentApp.getActiveDocument();
   var body = doc.getBody();
   // use getParagraphs with false: If there's a selection, the selection will be numbered, otherwise the whole doc.
-  var p = getParagraphs(false);
+  //var p = getParagraphs(false);
+  var p = body.getParagraphs();
   var result = "";
   if (numberstyle==-1) {
     result = getValueFromUser('Please enter prefix:');

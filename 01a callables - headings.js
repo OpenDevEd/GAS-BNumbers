@@ -76,6 +76,18 @@ function numberHeadingsAdd4Figure(run) {
   }
 }
 
+// 'H1-3 (update links)'
+function numberHeadingsAdd3WithLinks(run) {
+  headingStyle = numberHeadingsAdd3Figure.name;
+  saveHeadingStyleToDocumentProperty(headingStyle);
+  if (run) {
+    var xstyle = ['1', '1', '1', '-', '-', '-'];
+    var prefixlead = [null, null, null, null, null, null];
+    numberHeadings(true, true, 3, xstyle, prefixlead);
+  }
+}
+
+// 'H1-3/-/-/figure (update links)'
 function numberHeadingsAdd3Figure(run) {
   headingStyle = numberHeadingsAdd3Figure.name;
   saveHeadingStyleToDocumentProperty(headingStyle);
@@ -95,8 +107,8 @@ function updateFigureNumbers(run) {
   }
 };
 
-
-// Govet current with pickup
+// OBSOLETE
+// Govet current with 'pickup': First heading number is determined from first H1 heading.
 function numberHeadingsAddTeilFigure11pickGerman(run) {
   headingStyle = numberHeadingsAddTeilFigure11pickGerman.name;
   saveHeadingStyleToDocumentProperty(headingStyle);
@@ -110,13 +122,15 @@ function numberHeadingsAddTeilFigure11pickGerman(run) {
   }
 }
 
+// First heading number is determined from first H1 heading.
 //function numberHeadingsAddTeilFigure11pick(run) {
 function numberHeadingsAddChapter234() {
   headingStyle = numberHeadingsAddChapter234.name;
   saveHeadingStyleToDocumentProperty(headingStyle);
   if (run) {
     var xstyle = ['1#', '1', '1', '1', '-', '-'];
-    var prefixlead = ['Chapter ', null, null, null, null, 'Figure '];
+    // Elena:
+    var prefixlead = [SELECTED_PREFIX, null, null, null, null, 'Figure '];
     numberHeadings(true, true, 4, xstyle, prefixlead);
   }
 }
@@ -126,11 +140,12 @@ function numberHeadingsAddChapter23(run) {
   saveHeadingStyleToDocumentProperty(headingStyle);
   if (run) {
     var xstyle = ['1#', '1', '1', '-', '-', '-'];
-    var prefixlead = ['Chapter ', null, null, null, null, 'Figure '];
+    var prefixlead = [SELECTED_PREFIX, null, null, null, null, 'Figure '];
     numberHeadings(true, true, 3, xstyle, prefixlead);
   }
 }
 
+// OBSOLETE
 function numberHeadingsAddSection23(run) {
   headingStyle = numberHeadingsAddSection23.name;
   saveHeadingStyleToDocumentProperty(headingStyle);
@@ -141,6 +156,7 @@ function numberHeadingsAddSection23(run) {
   }
 }
 
+// OBSOLETE
 function numberHeadingsAddSession23(run) {
   headingStyle = numberHeadingsAddSession23.name;
   saveHeadingStyleToDocumentProperty(headingStyle);
@@ -151,6 +167,7 @@ function numberHeadingsAddSession23(run) {
   }
 }
 
+// OBSOLETE
 function numberHeadingsAddSection234(run) {
   headingStyle = numberHeadingsAddSection234.name;
   saveHeadingStyleToDocumentProperty(headingStyle);
@@ -162,6 +179,8 @@ function numberHeadingsAddSection234(run) {
 }
 
 
+
+/*
 // ?
 function numberHeadingsAddPartial1A11(run) {
   headingStyle = numberHeadingsAddPartial1A11.name;
@@ -172,7 +191,6 @@ function numberHeadingsAddPartial1A11(run) {
   }
 }
 
-/*
 // This one is used for DFID.
 function numberHeadingsAddPartialB11T(){
   var xstyle = ['B1-1','T1abcT2','1','1','1','figure'];
