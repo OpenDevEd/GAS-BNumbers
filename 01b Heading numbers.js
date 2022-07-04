@@ -5,6 +5,40 @@
 // http://stackoverflow.com/questions/12389088/google-docs-drive-number-the-headings
 var style = ['1', '1', '1', '1', '1', '1'];
 
+/*
+    var xstyle = ['1', '1', '1', '1', '-', 'figure'];
+
+xstyle defines the type of numbering/lettering. E.g. '1' means numerical, and 'A' means letters. 'figure' means: Restart the numbering.
+To get numbering like 1.1.A, use
+    var xstyle = ['1', '1', 'A', '1', '-', 'figure'];
+A "-" means 'no numbering'.
+
+The style 1# = pick-up means that the numbering does not start from 1, but the chapter number is taken from the first heading number:
+    var xstyle = ['1#', '1', 'A', '1', '-', 'figure'];
+This means that you can start a google doc with the first heading being "Chapter 21." enabling you to have a separate google doc for each chapter.
+
+The prefixlead determines an word appear before the number. For example, this use uses the word 'Figure " for Heading 6:
+    var prefixlead = [null, null, null, null, null, 'Figure '];
+
+This uses "Chapter " for heading 1 (and Figure for heading 6):
+    var prefixlead = ["Chapter ", null, null, null, null, 'Figure '];
+
+Typically, only heading 1 and heading 6 are customised. However, it would be possible to have this:
+  var prefixlead = ["Chapter ", " Section ", " Sub-Section ", null, null, 'Figure '];
+to give (a very strange) heading numbering like:
+  Chapter 4. Section 3. Sub-Section 1. The title of the heading.
+
+The funnction
+    numberHeadings(true, true, 4, xstyle, prefixlead);
+Has 5 parameters: whether add or remove
+whether to relabel links <- This parameter is now obsolete. Use updateNumbersInLinks instead.
+the depth to which to change headings (4)
+as well as the styles.
+
+The depth is redundant, because really it's defined through xstyle. However Bjoern was lazy.
+
+*/
+
 function numberHeadingsRepeatH1() {
   var xstyle = ['PUP', '1', '1', '1', '1', 'figure'];
   numberHeadings(true, 6, xstyle);
@@ -37,6 +71,18 @@ It may be possible to do this differently:
 Where there is no existing number, we could (a) insert from start, and then restyle... or (b) simple insert after the first character and then repeat first char, and then delete it.
 
 */
+
+/*
+
+function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, prefixchar, postfixchar) {
+  numberHeadingsAdd(add, maxLevel, numStyle, prefixstr, prefixchar, postfixchar);
+  if (changeBodyRefs) {
+      changeBodyRefsFunction(maxLevel, numStyle, prefixstr, prefixchar, postfixchar);
+  }
+}
+
+*/
+
 function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, prefixchar, postfixchar) {
   // alert("a="+add+";"+changeBodyRefs+maxLevel+";"+numStyle);
   /*  if (prefixstr) {
@@ -315,6 +361,7 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
   if (errors) {
     DocumentApp.getUi().alert('There were errors.\n' + errors);
   }
+  /* OBSOLETE - use updateNumbersInLinks instead!
   try {
     if (changeBodyRefs) {
       // Change Body Refs
@@ -325,14 +372,14 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
       regexpRestyleOffset("@\\d", style, 0, 1);
       regexpRestyleOffset("#\\d", style, 0, 1);
       // make references safe.
-      /* js replace not working
+      // ** js replace not working
       var regexp = "@([\\d\\.]*\\d)";
       var str = "⁅C$1⁆";
       singleReplace(regexp, str, true, true);      
       regexp = "#([\\d\\.]*\\d)";
       str = "⁅F$1⁆";
       singleReplace(regexp, str, true, true);      
-      */
+      * //
       var map = "";
       var mapf = "";
       // make changes
@@ -361,7 +408,7 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
         mapf = "unchanged";
       };
       DocumentApp.getUi().alert('Chapter numbering\n' + map + '\nFigure numbering\n' + mapf);
-      /*
+      // **
       var arr = Object.keys(hndict);
       arr.sort(function(a, b){
         // ASC  -> a.length - b.length
@@ -383,7 +430,7 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
             };
           };
         };
-        */
+        ** //
       var arr = Object.keys(newdict);
       for (var key in arr) {
         if (arr[key] != '') {
@@ -441,9 +488,9 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
       try {
         singleReplace("[:]", "@", false, false, null);
         // reinstate references
-        /* singleReplace("⁅C","@", false, false);      
+        // ** singleReplace("⁅C","@", false, false);      
         singleReplace("⁅F","#", false, false);      
-        singleReplace("⁆","", false, false);            */
+        singleReplace("⁆","", false, false);            ** //
       } catch (e) {
         alert("Error [:]->@ - " + e);
       };
@@ -452,6 +499,7 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
   } catch (e) {
     alert("Error in changeBodyRefs: " + e);
   };
+  */
   // end
 }
 

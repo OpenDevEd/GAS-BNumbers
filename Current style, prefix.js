@@ -1,17 +1,105 @@
 function showCurrentStyle() {
   const ui = DocumentApp.getUi();
   const activeStyle = getHeadingStyle();
+  Logger.log(activeStyle);
   onOpen();
   let menuItemText = headingStyles[activeStyle.value]['name'];
-  if (activeStyle.prefix == 'Custom') {
+  //if (activeStyle.prefix == 'Custom') {
     menuItemText = menuItemText.replace('~PREFIX~', activeStyle.prefixText);
-  }
+  //}
 
   ui.alert(menuItemText);
 }
 
 
 var headingStyles = {
+  "numberHeadingsAddChapter23": {
+    "name": "H1(~PREFIX~#)/H2-H3/-/figure",
+    "separatorAbove": true,
+    "replacePrefix": true,
+    "xstyle" : ['1#', '1', '1', '-', '-', 'figure'],
+    "prefixlead": [null, null, null, null, null, 'Figure '],
+    "OverrideH1PrefixWithCustomPrefix": true,
+    "numberDepth": 3
+  },
+  "numberHeadingsAddChapter234": {
+    "name": "H1(~PREFIX~#)/H2-H4/-/figure",
+    "replacePrefix": true,
+    "subMenuBelow": true,
+    "xstyle" : ['1#', '1', '1', '1', '-', 'figure'],
+    "prefixlead": [null, null, null, null, null, 'Figure '],
+    "OverrideH1PrefixWithCustomPrefix": true, 
+    "numberDepth": 4
+  },
+  "numberHeadingsAdd3Figure": {
+    "name": "H1-3/-/-/figure",
+    "separatorAbove": true,
+    "xstyle" : ['1', '1', '1', '-', '-', 'figure'],
+    "prefixlead": [null, null, null, null, null, 'Figure '],
+    "OverrideH1PrefixWithCustomPrefix": false, 
+    "numberDepth": 3
+  },
+  "numberHeadingsAdd4Figure": {
+    "name": "H1-4/-/figure",
+    "xstyle" : ['1', '1', '1', '1', '-', 'figure'],
+    "prefixlead": [null, null, null, null, null, 'Figure '],
+    "OverrideH1PrefixWithCustomPrefix": false, 
+    "numberDepth": 4
+    },
+  "numberHeadingsAddFigure": {
+    "name": "H1-5/figure",
+    "xstyle" : ['1', '1', '1', '1', '1', 'figure'],
+    "prefixlead": [null, null, null, null, null, 'Figure '],
+    "OverrideH1PrefixWithCustomPrefix": false, 
+    "numberDepth": 5
+  },
+  "numberHeadingsAdd1WithLinksOrNot": {
+    "name": "H1",
+    "separatorAbove": true,
+    "xstyle" : ['1', '-', '-', '-', '-', '-'],
+    "prefixlead": [null, null, null, null, null, null],
+    "OverrideH1PrefixWithCustomPrefix": false, 
+    "numberDepth": 1
+  },
+  "numberHeadingsAdd2WithLinksOrNot": {
+    "name": "H1-2",
+    "xstyle" : ['1', '1', '-', '-', '-', '-'],
+    "prefixlead": [null, null, null, null, null, null],
+    "OverrideH1PrefixWithCustomPrefix": false, 
+    "numberDepth": 2
+  },
+  "numberHeadingsAdd3WithLinksOrNot": {
+    "name": "H1-3",
+    "xstyle" : ['1', '1', '1', '-', '-', '-'],
+    "prefixlead": [null, null, null, null, null, null],
+    "OverrideH1PrefixWithCustomPrefix": false, 
+    "numberDepth": 3
+  },
+  "numberHeadingsAddPartial4WithLinksOrNot": {
+    "name": "H1-4",
+    "xstyle" : ['1', '1', '1', '1', '-', '-'],
+    "prefixlead": [null, null, null, null, null, null],
+    "OverrideH1PrefixWithCustomPrefix": false, 
+    "numberDepth": 4
+  },
+  "numberHeadingsAdd5WithLinksOrNot": {
+    "name": "H1-5",
+    "xstyle" : ['1', '1', '1', '1', '1', '-'],
+    "prefixlead": [null, null, null, null, null, null],
+    "OverrideH1PrefixWithCustomPrefix": false, 
+    "numberDepth": 5
+  },
+  "numberHeadingsAdd6WithLinksOrNot": {
+    "name": "H1-6",
+    "xstyle" : ['1', '1', '1', '1', '1', '1'],
+    "prefixlead": [null, null, null, null, null, null],
+    "OverrideH1PrefixWithCustomPrefix": false, 
+    "numberDepth": 6
+  }
+};
+
+
+var headingStylesOLD = {
   "numberHeadingsAdd3WithLinks": {
     "name": "H1-3 (update links)",
     "separatorAbove": true,

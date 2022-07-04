@@ -23,8 +23,8 @@ function sequentialNumbers(add, addSen, numberstyle) {
       marker2 = '⁆ ';
       break;
     case 2:
-      marker1 = '⟦⟦';
-      marker2 = '⟧⟧ ';
+      marker1 = '⟦';
+      marker2 = '⟧ ';
       markerL1 = "*";
       markerL2 = "*";
       markerS = "+";
@@ -233,8 +233,9 @@ function sequentialNumbers(add, addSen, numberstyle) {
   } else {
     // REMOVE NUMBERS (Updated 2022-06-19)
     if (addSen) {
-      var removeRegEx = "⟦⟦\\d(⇒\\d)?⟧⟧ ?";
+      var removeRegEx = marker1 + "\\d(⇒\\d)?" + marker2 + " ?";
     } else {
+      // This needs to be changed - same as line above marker1 + marker2
       var removeRegEx = "^⟦\\d+⟧ ?";
     }
     doc.replaceText(removeRegEx, '');

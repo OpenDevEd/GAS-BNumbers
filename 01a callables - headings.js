@@ -28,7 +28,7 @@ function getHeadingStyle() {
           headingStyle.prefixText = BNumbers_Custom_Prefix_Property;
         }
       }else{
-        headingStyle.prefixText = prefixes[BNumbers_Prefix_Property]["name"];
+        headingStyle.prefixText = prefixes[BNumbers_Prefix_Property]["value"];
       }
 
     } else {
@@ -62,9 +62,12 @@ function getHeadingStyleToDocumentProperty() {
 }
 
 function doNumberHeadings() {
-
-
-  eval(getHeadingStyle().value)(true);
+  // eval(getHeadingStyle().value)(true);
+  // Now have xstyle, prefixlead and depth avaialble from the style selection.
+  if (OverrideH1PrefixWithCustomPrefix) {
+    prefixlead[0] = CUSTOM_PREFIX;
+  }
+  numberHeadings(true, "OBSOLETE_PARAMETER", depth, xstyle, prefixlead);
 }
 
 function doNumberHeadingsAndLinks() {
@@ -73,6 +76,7 @@ function doNumberHeadingsAndLinks() {
   We can leave that for the future.
   fixBrokenLinksToHeadings();  
   */
+
   doNumberHeadings();
 
   DocumentApp.getActiveDocument().saveAndClose();
@@ -180,11 +184,13 @@ function numberHeadingsAddChapter234(run) {
   const headingPrefixStyle = getHeadingStyle();
   const SELECTED_PREFIX = headingPrefixStyle.prefixText;
 
+  const UPDATE_LINK_TEXT = getDocumentPropertyUpdateLinkText;
+
   if (run) {
     var xstyle = ['1#', '1', '1', '1', '-', '-'];
     // Elena:
     var prefixlead = [SELECTED_PREFIX, null, null, null, null, 'Figure '];
-    numberHeadings(true, true, 4, xstyle, prefixlead);
+    numberHeadings(true, UPDATE_LINK_TEXT, 4, xstyle, prefixlead);
   }
 }
 
