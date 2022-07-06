@@ -1,28 +1,61 @@
 function resetFullLinkTextInLinksToHeadings() {
-  internalHeadingLinks(false, true, false);
+  doNumberHeadingsAndLinks(numberHeadings = false, numbersInLinks = false, resetFullLinkText = true, markInternalHeadingLinks = false);
 }
 
 function markInternalHeadingLinks() {
-  internalHeadingLinks(false, false, true);
+  doNumberHeadingsAndLinks(numberHeadings = false, numbersInLinks = false, resetFullLinkText = false, markInternalHeadingLinks = true);
 }
 
 function updateNumbersInLinksToHeadings() {
-  internalHeadingLinks(true, false, false);
+  doNumberHeadingsAndLinks(numberHeadings = false, numbersInLinks = true, resetFullLinkText = false, markInternalHeadingLinks = false);
 }
 
 function clearInternalLinkMarkers() {
-  var ui = DocumentApp.getUi();
+  const ui = DocumentApp.getUi();
   try {
-    var doc = DocumentApp.getActiveDocument();
+    const doc = DocumentApp.getActiveDocument();
     doc.replaceText(INTERNAL_LINK_MARKER, '');
     doc.replaceText(BROKEN_INTERNAL_LINK_MARKER, '');
+
+    const footnotes = doc.getFootnotes();
+    let footnote;
+    for (let i in footnotes) {
+      footnote = footnotes[i].getFootnoteContents();
+      footnote.replaceText(INTERNAL_LINK_MARKER, '');
+      footnote.replaceText(BROKEN_INTERNAL_LINK_MARKER, '');
+    }
   }
   catch (error) {
     ui.alert('Error in clearInternalLinkMarkers: ' + error);
   }
 }
 
-function internalHeadingLinks(updateNumbers, resetFullLinkText, markInternalHeadingLinks) {
+// Out-of-use
+const LINK_MARK_STYLE = {
+  foregroundColor: {
+    color: {
+      rgbColor: {
+        red: 1.0
+      }
+    }
+  },
+  backgroundColor: {
+    color: {
+      rgbColor: {
+        red: 1.0,
+        blue: 1.0,
+        green: 1.0
+      }
+    }
+  },
+  bold: true
+};
+
+// Out-of-use
+const LINK_MARK_FIELDS = 'foregroundColor, backgroundColor, bold';
+
+// Previous version Update numbers in (hyper)links (to headings)
+function internalHeadingLinksOLD(updateNumbers, resetFullLinkText, markInternalHeadingLinks) {
   var ui = DocumentApp.getUi();
   try {
     var doc = DocumentApp.getActiveDocument();
@@ -80,6 +113,8 @@ function internalHeadingLinks(updateNumbers, resetFullLinkText, markInternalHead
 
     // Logger.log(JSON.stringify(allHeadingParagraphs));
     // Logger.log(allLinks);
+
+    // return 0;
 
     var checkLink, checkHeading, linkNumber, headingNumer;
     var infoLinks = '', newLinkText, rangeElementOldLink, rangeStart, attr;
@@ -140,7 +175,7 @@ function internalHeadingLinks(updateNumbers, resetFullLinkText, markInternalHead
       if (itsBrokenLink) {
         brokenLinkFlag = true;
       }
-      if (findOldLink){
+      if (findOldLink) {
         oldLinkFlag = true;
       }
       if (itsBrokenLink || findOldLink) {
@@ -148,7 +183,7 @@ function internalHeadingLinks(updateNumbers, resetFullLinkText, markInternalHead
       }
     }
 
-//if (infoLinks == '' && !markInternalHeadingLinks) {
+    //if (infoLinks == '' && !markInternalHeadingLinks) {
     if (!markInternalHeadingLinks && !oldLinkFlag) {
       if (updateNumbers) {
         infoLinks = 'Links numbering\nunchanged';
@@ -176,13 +211,35 @@ function internalHeadingLinks(updateNumbers, resetFullLinkText, markInternalHead
   }
 }
 
-
+// Out-of-use
+// internalHeadingLinksOLD uses the function
 function addItemToRequestsArray(requests, findOldLink, itsBrokenLink, allLinksItem, newLinkText, infoLinks, markInternal) {
   //if (findOldLink) {
-    if (itsBrokenLink) {
+  if (itsBrokenLink) {
+    requests.push({
+      insertText: {
+        text: BROKEN_INTERNAL_LINK_MARKER,
+        location: {
+          index: allLinksItem.startIndex
+        }
+      }
+    },
+      {
+        updateTextStyle: {
+          range: {
+            startIndex: allLinksItem.startIndex,
+            endIndex: allLinksItem.startIndex + BROKEN_INTERNAL_LINK_MARKER.length
+          },
+          text_style: LINK_MARK_STYLE,
+          fields: LINK_MARK_FIELDS,
+        }
+      });
+    infoLinks += allLinksItem.content + ' Heading no longer exists\n';
+  } else {
+    if (markInternal) {
       requests.push({
         insertText: {
-          text: BROKEN_INTERNAL_LINK_MARKER,
+          text: INTERNAL_LINK_MARKER,
           location: {
             index: allLinksItem.startIndex
           }
@@ -192,62 +249,41 @@ function addItemToRequestsArray(requests, findOldLink, itsBrokenLink, allLinksIt
           updateTextStyle: {
             range: {
               startIndex: allLinksItem.startIndex,
-              endIndex: allLinksItem.startIndex + BROKEN_INTERNAL_LINK_MARKER.length
+              endIndex: allLinksItem.startIndex + INTERNAL_LINK_MARKER.length
             },
             text_style: LINK_MARK_STYLE,
             fields: LINK_MARK_FIELDS,
           }
         });
-      infoLinks += allLinksItem.content + ' Heading no longer exists\n';
+      //infoLinks += allLinksItem.content + ' marked\n';
     } else {
-      if (markInternal) {
-        requests.push({
-          insertText: {
-            text: INTERNAL_LINK_MARKER,
-            location: {
-              index: allLinksItem.startIndex
+      requests.push({
+        insertText: {
+          text: newLinkText,
+          location: {
+            index: allLinksItem.startIndex + 1
+          }
+        }
+      },
+        {
+          deleteContentRange: {
+            range: {
+              startIndex: allLinksItem.startIndex,
+              endIndex: allLinksItem.startIndex + 1
             }
           }
         },
-          {
-            updateTextStyle: {
-              range: {
-                startIndex: allLinksItem.startIndex,
-                endIndex: allLinksItem.startIndex + INTERNAL_LINK_MARKER.length
-              },
-              text_style: LINK_MARK_STYLE,
-              fields: LINK_MARK_FIELDS,
-            }
-          });
-        //infoLinks += allLinksItem.content + ' marked\n';
-      } else {
-        requests.push({
-          insertText: {
-            text: newLinkText,
-            location: {
-              index: allLinksItem.startIndex + 1
+        {
+          deleteContentRange: {
+            range: {
+              startIndex: allLinksItem.startIndex + newLinkText.length,
+              endIndex: allLinksItem.startIndex + newLinkText.length + allLinksItem.content.length - 1
             }
           }
-        },
-          {
-            deleteContentRange: {
-              range: {
-                startIndex: allLinksItem.startIndex,
-                endIndex: allLinksItem.startIndex + 1
-              }
-            }
-          },
-          {
-            deleteContentRange: {
-              range: {
-                startIndex: allLinksItem.startIndex + newLinkText.length,
-                endIndex: allLinksItem.startIndex + newLinkText.length + allLinksItem.content.length - 1
-              }
-            }
-          });
-        infoLinks += allLinksItem.content + ' -> ' + newLinkText + '\n';
-      }
+        });
+      infoLinks += allLinksItem.content + ' -> ' + newLinkText + '\n';
     }
+  }
   //}
   return infoLinks;
 }

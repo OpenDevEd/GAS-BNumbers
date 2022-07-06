@@ -1,24 +1,10 @@
-var INTERNAL_LINK_MARKER = "<HEADING_LINK>";
-var BROKEN_INTERNAL_LINK_MARKER = "<BROKEN_HEADING_LINK>";
+const DEFAULT_STYLE = "numberHeadingsAdd3Figure";
+const DEFAULT_PREFIX = "None";
 
-var LINK_MARK_STYLE = {
-  foregroundColor: {
-    color: {
-      rgbColor: {
-        red: 1.0
-      }
-    }
-  },
-  backgroundColor: {
-    color: {
-      rgbColor: {
-        red: 1.0,
-        blue: 1.0,
-        green: 1.0
-      }
-    }
-  },
-  bold: true
-};
+const INTERNAL_LINK_MARKER = "<HEADING_LINK>";
+const BROKEN_INTERNAL_LINK_MARKER = "<BROKEN_HEADING_LINK>";
 
-var LINK_MARK_FIELDS = 'foregroundColor, backgroundColor, bold';
+const LINK_MARK_STYLE_NEW = new Object();
+LINK_MARK_STYLE_NEW[DocumentApp.Attribute.FOREGROUND_COLOR] = "#ff0000";
+LINK_MARK_STYLE_NEW[DocumentApp.Attribute.BACKGROUND_COLOR] = "#ffffff";
+LINK_MARK_STYLE_NEW[DocumentApp.Attribute.BOLD] = true;
