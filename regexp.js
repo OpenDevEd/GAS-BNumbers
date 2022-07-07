@@ -1,8 +1,9 @@
-
+// numberHeadings uses the function
 function singleReplace(re,str,isRegExp,useJS,flags) {
   singleReplacePartial(re,str,isRegExp,useJS,flags,true,true);
 };
   
+// singleReplace use the function
 function singleReplacePartial(re,str,isRegExp,useJS,flags,bodyFlag,fnFlag) {
   // isRegExp: Is the string passed in a regexp or a literal string?
   // useJS: 
@@ -90,96 +91,14 @@ function singleReplacePartial(re,str,isRegExp,useJS,flags,bodyFlag,fnFlag) {
   } else {
     alert("singleReplacePartial: No paragraphs found.");
   };
-};
-  
-function singleReplaceKeepUrl(regu,replacement,isRegExp,offsetStart, offsetEnd) {
-  // isRegExp: Is the string passed in a regexp or a literal string?
-  try {
-    if (!isRegExp) {
-      regu = regu.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&');
-    };
-  } catch(e) {
-    alert("Error in regu: "+e);
-  };
-  /*
-  // This is just a basic replacement:
-  var bodyElement = DocumentApp.getActiveDocument().getBody();
-  var searchResult = bodyElement.findText(regu);
-  var replacement = str;
-  while (searchResult !== null) {
-    var thisElement = searchResult.getElement();
-    thisElement = thisElement.replaceText(regu, replacement);
-    searchResult = bodyElement.findText(regu, searchResult);
-  }
-  */
-  try {
-    var doc = DocumentApp.getActiveDocument();
-    var counter = 0;
-    var p = getParagraphsInBodyAndFootnotes(false,true);
-  } catch(e) {
-    alert("Error in singleReplaceKeepUrl>getParagraphsInBodyAndFootnotes: "+e);
-  };
-  try {
-  for (var i=0; i<p.length; i++) {
-    try {
-      var mybody = p[i];
-      // Track through range elements
-      var rangeElement = mybody.findText(regu);
-      while (rangeElement !== null) {
-        counter++;
-        // Determine the input text:
-        var mytext =  rangeElement.getElement().getText();
-        var elem = rangeElement.getElement().copy().editAsText();
-        var elemlength = elem.getText().length;
-        if (rangeElement.isPartial()) {
-          if (rangeElement.getEndOffsetInclusive()+1 < elemlength-1) {
-            elem.deleteText(rangeElement.getEndOffsetInclusive()+1,elemlength-1);
-          }
-          if (rangeElement.getStartOffset()-1>0) {
-            elem.deleteText(0,rangeElement.getStartOffset()-1);
-          };
-          elemlength = elem.getText().length;
-        };
-        var url = null;
-        var text = elem.getText();
-        // Find URL by tracking through the input text - take first available url
-        for (var i=0; i < text.length; i++) {
-          if (!url) {
-            url = elem.getLinkUrl(i);
-          };
-        };
-        // replacement = "{"+replacement+"}"
-        eat = rangeElement.getElement().editAsText();
-        eat.deleteText(rangeElement.getStartOffset(),rangeElement.getEndOffsetInclusive());
-        eat.insertText(rangeElement.getStartOffset(),replacement);
-        var pin = rangeElement.getStartOffset();
-        var pout = rangeElement.getStartOffset() + replacement.length - 1;
-        eat.setLinkUrl(pin, pout, null);
-        pin += offsetStart;
-        pout +=  offsetEnd;
-        if (pout >= pin ) {
-          eat.setLinkUrl(pin, pout, url);
-        } else {
-          //alert("Error setting link on: "+text);
-        };
-        rangeElement = mybody.findText(regu,rangeElement );
-        rangeElement = null;
-      };
-    } catch(e) {
-      alert(i+ " " + e);
-    };
-  }
-  } catch(e) {
-    alert("Error in singleReplaceKeepUrl: "+e);
-  };
-  return counter;
-};
+}
 
-
+// minifyParaSenMarker, maxifyParaSenMarker use the function
 function regexpRestyle(target,mystyle,elementsIn) {
   regexpRestyleOffset(target,mystyle,0,0,elementsIn);
 };
 
+// numberHeadings, regexpRestyle use the function
 function regexpRestyleOffset(target,mystyle,startOff,endOff,elementsIn) {
   // If no search parameter was provided, ask for one
   if (arguments.length == 0) {
@@ -205,42 +124,6 @@ function regexpRestyleOffset(target,mystyle,startOff,endOff,elementsIn) {
       var thisElementText = thisElement.asText();
       // thisElementText.setAttributes(mystyle);
       thisElementText.setAttributes(searchResult.getStartOffset()+startOff, searchResult.getEndOffsetInclusive()+endOff,mystyle);    
-      searchResult = thisEl.findText(target, searchResult);
-    };      
-  }
-  
-}
-
-/*
-This function is obsolete: It's a demonstration of how to do this operation all in one function. However it operates on the body only
-*/
-function regexpRestyleBodyOnly(target,mystyle,elementsIn) {
-  // If no search parameter was provided, ask for one
-  if (arguments.length == 0) {
-    var ui = DocumentApp.getUi();
-    var result = ui.prompt('Text Highlighter',
-      'Enter text to highlight:', ui.ButtonSet.OK_CANCEL);
-    // Exit if user hit Cancel.
-    if (result.getSelectedButton() !== ui.Button.OK) return;
-    // else
-    target = result.getResponseText();
-  }
-  var elements = [];
-  if (!elementsIn) {
-    var doc = DocumentApp.getActiveDocument();
-    var bodyElement = DocumentApp.getActiveDocument().getBody();
-    elements[0] = bodyElement;
-  } else {
-    elements = elementsIn;
-  };
-  for (var i=0; i<elements.length; i++) {
-    var thisEl = elements[i];
-    var searchResult = thisEl.findText(target);
-    while (searchResult !== null) {
-      var thisElement = searchResult.getElement();
-      var thisElementText = thisElement.asText();
-      // thisElementText.setAttributes(mystyle);
-      thisElementText.setAttributes(searchResult.getStartOffset(), searchResult.getEndOffsetInclusive(),mystyle);    
       searchResult = thisEl.findText(target, searchResult);
     };      
   }

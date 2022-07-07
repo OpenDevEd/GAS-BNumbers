@@ -1,5 +1,4 @@
-
-
+// regexpRestyleOffset, singleReplacePartial use the function
 function getParagraphsInBodyAndFootnotesExtended(onePara,getBodyParas,getFootnoteParas) {
   var paraout = [];
   var selection = DocumentApp.getActiveDocument().getSelection();

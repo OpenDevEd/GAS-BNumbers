@@ -72,17 +72,6 @@ Where there is no existing number, we could (a) insert from start, and then rest
 
 */
 
-/*
-
-function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, prefixchar, postfixchar) {
-  numberHeadingsAdd(add, maxLevel, numStyle, prefixstr, prefixchar, postfixchar);
-  if (changeBodyRefs) {
-      changeBodyRefsFunction(maxLevel, numStyle, prefixstr, prefixchar, postfixchar);
-  }
-}
-
-*/
-
 function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, prefixchar, postfixchar, allHeadingsObj, allHeadingsArray) {
   // alert("a="+add+";"+changeBodyRefs+maxLevel+";"+numStyle);
   /*  if (prefixstr) {
@@ -516,6 +505,7 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
   };
 }
 
+// Function numberHeadings uses the function
 function getNumberingStyle(l, ins, numStyle, substr) {
   var figureType = "Figure";
   numStylel1 = numStyle[l - 1];
@@ -646,44 +636,17 @@ function getNumberingStyle(l, ins, numStyle, substr) {
   return txt;
 }
 
-function updateSectionNumbersT() {
-  var doc = DocumentApp.getActiveDocument();
-  var body = doc.getBody();
-  var p = doc.getParagraphs();
-  var numbers = 0;
-  var TS = '';
-  for (var i in p) {
-    var e = p[i];
-    var eText = e.getText() + '';
-    var eTypeString = e.getHeading() + '';
-    if (!eTypeString.match(/Heading ?6/i)) {
-      continue;
-    }
-
-    numbers++;
-    if (TS == '') {
-      TS = (eText.match(/^(T\d+\-\d+)/))[0];
-    };
-    Logger.log(eText);
-    var newText = eText.replace(/^(T\d+\-\d+)/, TS);
-    var newText = newText.replace(/ (\#1|\d+) /, ' ' + numbers + ' ');
-    e.setText(newText);
-    Logger.log([newText]);
-  }
-}
-
-
+// Menu item Utilities -> 'nhprefix prefix all headings with a string'
+// Gets a string from user, adds the string at the beginning of every headings.
 function prefixHeadings() {
   var prefix = getValueFromUser("All headings will be prefixed with a fixed string. Please enter the string.");
   if (prefix != "") {
     var doc = DocumentApp.getActiveDocument();
-    var body = doc.getBody();
     var p = doc.getParagraphs();
     for (var i in p) {
       var e = p[i];
       var eText = e.getText() + '';
       var eTypeString = e.getHeading() + '';
-      Logger.log(eTypeString);
 
       /*
       New Docs return HEADING1
@@ -697,100 +660,7 @@ function prefixHeadings() {
         // continue if the paragraph is not a heading
         continue;
       }
-      //      if (eTypeString.match(/Heading 6/)) {        continue;      }
-      //      if (eTypeString.match(/Heading 5/)) {        continue;      }
-      //      if (eTypeString.match(/Heading 4/)) {        continue;      }
       e.editAsText().insertText(0, prefix);
     }
   };
 }
-
-/*
-if (
-        (e.getParent().getType().toString() == 'BODY_SECTION')
-        && (e.getType().toString() == 'PARAGRAPH' || e.getType().toString().match(/Heading \d/))
-        ) {
-          number++;
-          try {
-            var parent = e.getParent();
-            //DocumentApp.getUi().alert(e.getType());
-            var parPosition = parent.getChildIndex(e);
-            var newPara = doc.insertParagraph(parPosition, txt);
-            newPara.setAttributes(style);
-            var thisElementText = newPara.editAsText();
-            if (style == 0) {
-            if (myfontsize) thisElementText.setFontSize(myfontsize);
-              if (fgcolor) thisElementText.setForegroundColor(fgcolor);
-              if (bgcolor) thisElementText.setBackgroundColor(bgcolor);
-            } else { // if (style==1) {
-              thisElementText.setBold(true);
-            };
-            e.merge(); // merge these two paragraphs
-          } catch (exep) {
-            // These should be recorded somehow.
-            // DocumentApp.getUi().alert('exception: '+e.getType() + "; " + exep);
-            // DocumentApp.getUi().alert("Sorry, this feature hasn't been implemented yet.");
-          }
-        } else if (
-          (e.getParent().getType().toString() == 'TABLE_CELL')
-          && (e.getType().toString() == 'PARAGRAPH' || e.getType().toString().match(/Heading \d/))
-        ) {
-          // We're in a table
-          number++;
-          try {
-            var parent = e.getParent();
-            // parent[TABLE_CELL] > e[PARAGRAPH]
-            var parPosition = parent.getChildIndex(e);
-            // DocumentApp.getUi().alert("Location:"+e.getParent().getType().toString()+">"+e.getType().toString()+">"+parPosition);
-            var newPara = parent.insertParagraph(parPosition, txt);
-            newPara.setAttributes(style);
-            var thisElementText = newPara.editAsText();
-            if (style == 0) {
-              if (myfontsize) thisElementText.setFontSize(myfontsize);
-              if (fgcolor) thisElementText.setForegroundColor(fgcolor);
-              if (bgcolor) thisElementText.setBackgroundColor(bgcolor);
-            } else { // if (style==1) {
-              thisElementText.setBold(true);
-            };
-            e.merge(); // merge these two paragraphs
-          } catch (exep) {
-            // These should be recorded somehow.
-            // DocumentApp.getUi().alert('exception: '+e.getType() + "; " + exep);
-            // DocumentApp.getUi().alert("Sorry, this feature hasn't been implemented yet.");
-          }
-        } else if (e.getParent().getType().toString() == 'BODY_SECTION' && e.getType().toString() == 'LIST_ITEM') {
-          number++;
-          // Cannot merge list items: Element must be preceded by an element of the same type.
-          try {
-            var parent = e.getParent();
-            //DocumentApp.getUi().alert(e.getType());
-            var parPosition = parent.getChildIndex(e);
-            var newPara = doc.insertListItem(parPosition, txt);
-            newPara.setAttributes(style);
-            var thisElementText = newPara.editAsText();
-            if (style == 0) {
-              if (myfontsize) thisElementText.setFontSize(myfontsize);
-              if (fgcolor) thisElementText.setForegroundColor(fgcolor);
-              if (bgcolor) thisElementText.setBackgroundColor(bgcolor);
-            } else { // if (style==1) {
-              thisElementText.setBold(true);
-            };
-            // This doesn't work
-            // e.merge(); // merge these two paragraphs
-            // but this does:
-            var pp2 = parent.getChildIndex(e);
-            // var pp1 = parent.getChildIndex(newPara);
-            //DocumentApp.getUi().alert(parPosition + ", " + pp1 + "; " + pp2);
-            doc.getChild(pp2).merge();
-          } catch (exep) {
-            // DocumentApp.getUi().alert(e.getType() + "; " + newPara.getType());
-            // DocumentApp.getUi().alert('exception: '+e.getType() + "; " + exep);
-          }
-        } else {
-          // e.g. tables are skipped.
-          // DocumentApp.getUi().alert('Unknown type: '+e.getType());
-        }
-        */
-
-
-

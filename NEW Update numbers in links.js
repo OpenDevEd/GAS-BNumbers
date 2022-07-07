@@ -1,3 +1,4 @@
+// doNumberHeadingsAndLinks use the function
 function internalHeadingLinksNew(updateNumbers, resetFullLinkText, markInternalHeadingLinks, allHeadingsObj, infoLinksObj) {
   try {
     const doc = DocumentApp.getActiveDocument();
@@ -9,6 +10,12 @@ function internalHeadingLinksNew(updateNumbers, resetFullLinkText, markInternalH
   }
 }
 
+// doNumberHeadingsAndLinks use the function
+// Collects texts of all headings
+// Returns object allHeadingParagraphs 
+// {headingId: 'Heading text', ...}
+// and array allHeadings
+// [{ headingId: headingId, text: 'Heading text' }, ...]
 function collectHeadingTexts(doc) {
   try {
     if (!doc) {
@@ -83,11 +90,26 @@ function collectHeadingTexts(doc) {
   }
 }
 
+// internalHeadingLinksNew uses the function
 function changeAllBodyLinks(doc, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks) {
   const element = doc.getBody();
   changeAllLinks(element, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks);
 }
 
+// internalHeadingLinksNew uses the function
+function changeAllFootnotesLinks(doc, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks) {
+  const footnotes = doc.getFootnotes();
+  let footnote, numChildren;
+  for (let i in footnotes) {
+    footnote = footnotes[i].getFootnoteContents();
+    numChildren = footnote.getNumChildren();
+    for (let j = 0; j < numChildren; j++) {
+      changeAllLinks(footnote.getChild(j), allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks);
+    }
+  }
+}
+
+// changeAllBodyLinks, changeAllFootnotesLinks use the function
 function changeAllLinks(element, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks) {
 
   let text, newText, start, end, indices, partAttributes, numChildren, getIndexFlag, insertMarkerFlag, itsBrokenLink;
@@ -194,19 +216,6 @@ function changeAllLinks(element, allHeadingsObj, infoLinksObj, updateNumbers, re
       for (let i = 0; i < numChildren; i++) {
         changeAllLinks(element.getChild(i), allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks);
       }
-    }
-  }
-}
-
-
-function changeAllFootnotesLinks(doc, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks) {
-  const footnotes = doc.getFootnotes();
-  let footnote, numChildren;
-  for (let i in footnotes) {
-    footnote = footnotes[i].getFootnoteContents();
-    numChildren = footnote.getNumChildren();
-    for (let j = 0; j < numChildren; j++) {
-      changeAllLinks(footnote.getChild(j), allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks);
     }
   }
 }

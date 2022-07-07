@@ -5,6 +5,7 @@ function onOpen() {
 function Menu_HePaNumbering() {
   const activeStyle = getHeadingStyle();
 
+  // Select H1 prefix
   const subMenuPrefixes = DocumentApp.getUi().createMenu('Select H1 prefix');
   let selectedPrefixMarker = '';
   for (let prefix in prefixes) {
@@ -15,7 +16,8 @@ function Menu_HePaNumbering() {
     }
     subMenuPrefixes.addItem(prefixes[prefix]['name'] + ' ' + selectedPrefixMarker, 'prefixes.' + prefix + '.run');
   }
-
+  // End. Select H1 prefix
+  
   // Select style submenu
   const subMenuStyles = DocumentApp.getUi().createMenu('Select style')
     .addItem('Show current style', 'showCurrentStyle');
@@ -59,9 +61,9 @@ function Menu_HePaNumbering() {
   const submenu_para = DocumentApp.getUi().createMenu('Paragraphs')
     .addItem('pna Paragraph numbers add, with  ⟦ and ⟧', 'paraNumAdd')
     .addItem('psna Paragraph/sentence numbers add, with ⟦ and ⟧', 'paraSenNumAdd')
-    .addItem('psnr Paragraph/sentence numbers remove ', 'paraSenNumRemove')
+    .addItem('psnr Paragraph/sentence numbers remove', 'paraSenNumRemove')
     .addSeparator()
-    .addItem('psnm Paragraph/sentence numbers minify ', 'minifyParaSenMarker')
+    .addItem('psnm Paragraph/sentence numbers minify', 'minifyParaSenMarker')
     .addItem('psnshow Paragraph/sentence numbers - restore size', 'maxifyParaSenMarker');
 
   const menu = DocumentApp.getUi().createMenu('Heading & paragraph numbering')

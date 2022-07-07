@@ -1,15 +1,19 @@
+// Menu item Utilities -> 'Links: Replace entire link text with text of corresponding heading'
 function resetFullLinkTextInLinksToHeadings() {
   doNumberHeadingsAndLinks(numberHeadings = false, numbersInLinks = false, resetFullLinkText = true, markInternalHeadingLinks = false);
 }
 
+// Menu item Utilities -> 'Mark internal heading links'
 function markInternalHeadingLinks() {
   doNumberHeadingsAndLinks(numberHeadings = false, numbersInLinks = false, resetFullLinkText = false, markInternalHeadingLinks = true);
 }
 
+// Menu item Utilities -> 'Links: Update numbers in (hyper)links (to headings)'
 function updateNumbersInLinksToHeadings() {
   doNumberHeadingsAndLinks(numberHeadings = false, numbersInLinks = true, resetFullLinkText = false, markInternalHeadingLinks = false);
 }
 
+// Menu item Utilities -> 'Clear internal heading link markers'
 function clearInternalLinkMarkers() {
   const ui = DocumentApp.getUi();
   try {
@@ -54,6 +58,7 @@ const LINK_MARK_STYLE = {
 // Out-of-use
 const LINK_MARK_FIELDS = 'foregroundColor, backgroundColor, bold';
 
+// Out-of-use
 // Previous version Update numbers in (hyper)links (to headings)
 function internalHeadingLinksOLD(updateNumbers, resetFullLinkText, markInternalHeadingLinks) {
   var ui = DocumentApp.getUi();

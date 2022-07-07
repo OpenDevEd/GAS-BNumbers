@@ -1,21 +1,28 @@
+// Menu item Select style -> 'Show current style'
+// Shows the current (selected by user or default) style in alert
 function showCurrentStyle() {
-  const ui = DocumentApp.getUi();
+  //const ui = DocumentApp.getUi();
   const activeStyle = getHeadingStyle();
   onOpen();
   let menuItemText = headingStyles[activeStyle.value]['name'];
   menuItemText = menuItemText.replace('~PREFIX~', activeStyle.prefixText);
-  ui.alert(menuItemText);
+  //ui.alert(menuItemText);
+  alert(menuItemText);
 }
 
+// Saves a selected style in Document properties, then renumbers headings and updates numbers in links.
+// All menu items of submenu 'Select style' (except 'Show current style') run the function
 function activateHeadingStyle(obj) {
   // Finds key in headingStyles where value equals obj
   const headingStyle = Object.keys(headingStyles).find(key => headingStyles[key] === obj);
 
-  saveHeadingStyleToDocumentProperty(headingStyle);
+  setDocumentPropertyString("BNumbers_HeadingStyle_Property", headingStyle)
+  onOpen();
 
   doNumberHeadingsAndLinks();
 }
 
+// Menu items of submenu 'Select style'
 const headingStyles = {
   "numberHeadingsAddChapter23": {
     "name": "H1(~PREFIX~#)/H2-H3/-/figure",
@@ -111,7 +118,7 @@ const headingStyles = {
   }
 };
 
-
+// Menu items of submenu 'Select H1 prefix'
 const prefixes = {
   "None": {
     "name": "<none>",
@@ -144,11 +151,15 @@ const prefixes = {
   }
 };
 
+// All menu items of submenu 'Select H1 prefix' run the function
+// Saves a selected prefix in Document properties
 function activatePrefix(obj) {
   const prefixStyle = Object.keys(prefixes).find(key => prefixes[key] === obj);
   savePrefixToDocumentProperty(prefixStyle);
 }
 
+// Gets custom prefix from user and saves it in Document properties
+// Menu item 'Select style' -> 'Select H1 prefix' -> 'Custom'
 function enterPrefix() {
   const prefix = getValueFromUser('User defined prefix', 'Please type space after the string, if you want a space before the number.');
   if (prefix != null & prefix != '') {

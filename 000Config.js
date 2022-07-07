@@ -1,5 +1,5 @@
-const DEFAULT_STYLE = "numberHeadingsAdd3Figure";
-const DEFAULT_PREFIX = "None";
+const DEFAULT_STYLE = "numberHeadingsAdd3WithLinksOrNot"; // "H1-H3";
+const DEFAULT_PREFIX = "Chapter";
 
 const INTERNAL_LINK_MARKER = "<HEADING_LINK>";
 const BROKEN_INTERNAL_LINK_MARKER = "<BROKEN_HEADING_LINK>";

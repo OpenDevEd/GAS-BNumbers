@@ -1,4 +1,5 @@
 
+// enterPrefix, prefixHeadings, sequentialNumbers use the function
 function getValueFromUser(title,text, defaultOK, defaultCancel, defaultClose) {
   text = text || "Please enter a value.";
   defaultOK = defaultOK || "";
@@ -30,6 +31,7 @@ function getValueFromUser(title,text, defaultOK, defaultCancel, defaultClose) {
   return null;
 }
 
+// out-of-use
 function getConfirmationFromUser(text) {
   // Display a dialog box with a message and "Yes" and "No" buttons.
   var ui = DocumentApp.getUi();
@@ -42,17 +44,8 @@ function getConfirmationFromUser(text) {
   }
 }
 
-
+// numberHeadings, showCurrentStyle use the function
 function alert(text) {
   DocumentApp.getUi().alert(text);
 };
-
-function alertv(text,myvariable) {
-  DocumentApp.getUi().alert(text+" = "+JSON.stringify(myvariable));
-};
-
-function onlyUnique(value, index, self) { 
-    return self.indexOf(value) === index;
-};
-
 

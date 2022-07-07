@@ -1,6 +1,5 @@
-var style = ['1', '1', '1', '1', '1', '1'];
-
-// Default:
+// Returns object headingStyle that describes current or default style
+// doNumberHeadings, removeAllHeadingNumbers, showCurrentStyle, Menu_HePaNumbering use the function
 function getHeadingStyle() {
   var headingStyle = {
     value: DEFAULT_STYLE,
@@ -54,38 +53,26 @@ function getHeadingStyle() {
   return headingStyle;
 }
 
+// activatePrefix, enterPrefix use the function
 function savePrefixToDocumentProperty(prefix) {
   setDocumentPropertyString("BNumbers_Prefix_Property", prefix)
   onOpen();
 }
 
-function saveHeadingStyleToDocumentProperty(headingstyle) {
-  setDocumentPropertyString("BNumbers_HeadingStyle_Property", headingstyle)
-  onOpen();
-}
-
-function getHeadingStyleToDocumentProperty() {
-  return getDocumentPropertyString("BNumbers_HeadingStyle_Property")
-}
-
+// Menu item Utilities -> 'Add/update heading numbers only [links not updated]'
+// Also
+// function doNumberHeadingsAndLinks uses the function
+// Renumbers headings.
 function doNumberHeadings(allHeadingsObj, allHeadingsArray) {
-  // eval(getHeadingStyle().value)(true);
-  // Now have xstyle, prefixlead and depth avaialble from the style selection.
 
-  ///if (headingStyle == null) {
-  headingStyle = getHeadingStyle();
-  //}
+  const headingStyle = getHeadingStyle();
 
-  // const depth = headingStyle['depth'];
-  // const xstyle = headingStyles[headingStyle]['xstyle'];
-  // const prefixlead = headingStyles[headingStyle]['prefixlead'];
-
-  // if (OverrideH1PrefixWithCustomPrefix) {
-  //   prefixlead[0] = CUSTOM_PREFIX;
-  // }
   numberHeadings(true, true, headingStyle.depth, headingStyle.xstyle, headingStyle.prefixlead, null, null, allHeadingsObj, allHeadingsArray);
 }
 
+// Menu item 'nha Add/update heading numbers and links'
+// activateHeadingStyle, resetFullLinkTextInLinksToHeadings, markInternalHeadingLinks, updateNumbersInLinksToHeadings use the function
+// Renumbers headings and updates numbers in texts of links.
 function doNumberHeadingsAndLinks(numberHeadings = true, numbersInLinks = true, resetFullLinkText = false, markInternalHeadingLinks = false) {
   /*
   Prior to renumbering, we should check for any broken section links and fix these.
@@ -122,6 +109,8 @@ function doNumberHeadingsAndLinks(numberHeadings = true, numbersInLinks = true, 
   }
 }
 
+// Menu item Utilities -> 'nh6t Heading 6 tables/figures only'
+// Numbers only Headings 6
 function updateFigureNumbers(run) {
   // headingStyle = updateFigureNumbers.name;
   // saveHeadingStyleToDocumentProperty(headingStyle);
@@ -131,6 +120,8 @@ function updateFigureNumbers(run) {
   //}
 };
 
+// Menu item Utilities -> 'nhr Remove all heading numbers'
+// Removes all heading numbers of current heading style
 function removeAllHeadingNumbers() {
   const headingStyle = getHeadingStyle();
   numberHeadings(false, false, headingStyle.depth, headingStyle.xstyle);
