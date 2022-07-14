@@ -7,7 +7,7 @@ function getHeadingStyle() {
     prefix: DEFAULT_PREFIX,
     prefixMarker: "",
     prefixText: prefixes[DEFAULT_PREFIX]["name"],
-    depth: headingStyles[DEFAULT_STYLE]["depth"],
+    depth: headingStyles[DEFAULT_STYLE]["numberDepth"],
     xstyle: headingStyles[DEFAULT_STYLE]["xstyle"],
     prefixlead: headingStyles[DEFAULT_STYLE]["prefixlead"]
   };
@@ -68,6 +68,11 @@ function doNumberHeadings(allHeadingsObj, allHeadingsArray) {
   const headingStyle = getHeadingStyle();
 
   numberHeadings(true, true, headingStyle.depth, headingStyle.xstyle, headingStyle.prefixlead, null, null, allHeadingsObj, allHeadingsArray);
+
+  if (headingStyle.marker == '◯') {
+    setDocumentPropertyString("BNumbers_HeadingStyle_Property", headingStyle.value);
+    onOpen();
+  }
 }
 
 // Menu item 'nha Add/update heading numbers and links'

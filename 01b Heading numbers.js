@@ -355,7 +355,7 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
               errors += e + "\n";
             }
           } else {
-            Logger.log("Not replaced, maxLevel=" + maxLevel);
+            //Logger.log("Not replaced, maxLevel=" + maxLevel);
           }
         }
       }

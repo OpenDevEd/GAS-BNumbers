@@ -16,7 +16,7 @@ function activateHeadingStyle(obj) {
   // Finds key in headingStyles where value equals obj
   const headingStyle = Object.keys(headingStyles).find(key => headingStyles[key] === obj);
 
-  setDocumentPropertyString("BNumbers_HeadingStyle_Property", headingStyle)
+  setDocumentPropertyString("BNumbers_HeadingStyle_Property", headingStyle);
   onOpen();
 
   doNumberHeadingsAndLinks();
