@@ -375,8 +375,8 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
       style[DocumentApp.Attribute.FOREGROUND_COLOR] = '#000000'; // null
       style[DocumentApp.Attribute.BACKGROUND_COLOR] = null; // null
       style[DocumentApp.Attribute.FONT_SIZE] = 11;
-      regexpRestyleOffset("@\\d",style,0,1);
-      regexpRestyleOffset("#\\d",style,0,1);  
+      regexpRestyleOffset("@\\d", style, 0, 1);
+      regexpRestyleOffset("#\\d", style, 0, 1);
       // make references safe.
       /* js replace not working
       var regexp = "@([\\d\\.]*\\d)";
@@ -390,7 +390,7 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
       var mapf = "";
       // make changes
       var newdict = {};
-      for(var key in hndict) {
+      for (var key in hndict) {
         var value = hndict[key];
         if (key != value) {
           map += key + " -> " + value + "\n";
@@ -402,7 +402,7 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
         map = "unchanged";
       };
       var fnewdict = {};
-      for(var key in fndict) {
+      for (var key in fndict) {
         var value = fndict[key];
         if (key != value) {
           mapf += key + " -> " + value + "\n";
@@ -413,7 +413,11 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
       if (mapf == "") {
         mapf = "unchanged";
       };
-      DocumentApp.getUi().alert('Chapter numbering\n'+map+'\nFigure numbering\n'+mapf);
+
+      const debugMode = getDebugMode();
+      if (debugMode === true) {
+        DocumentApp.getUi().alert('Chapter numbering\n' + map + '\nFigure numbering\n' + mapf);
+      }
       /*
       var arr = Object.keys(hndict);
       arr.sort(function(a, b){
@@ -438,38 +442,38 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
         };
         */
       var arr = Object.keys(newdict);
-      for(var key in arr) {    
-        if (arr[key] != '' ) {
-          var regexp = "@"+arr[key];
-          var str = "⁅C"+arr[key]+"⁆";
+      for (var key in arr) {
+        if (arr[key] != '') {
+          var regexp = "@" + arr[key];
+          var str = "⁅C" + arr[key] + "⁆";
           //alert(regexp+ " -> " + str);
-          singleReplace(regexp, str, false, false);      
+          singleReplace(regexp, str, false, false);
         };
-      };      
-      for(var key in arr) {
+      };
+      for (var key in arr) {
         var value = newdict[arr[key]];
         if (value && arr[key]) {
           if (arr[key] != '' && arr[key] != value) {
             // alert('Chapter numbering x\n'+arr[key]+"->"+value);
             //singleReplace("@"+arr[key],"[["+arr[key]+"]][:]"+value,false,false,null);
             try {
-              singleReplace("⁅C"+arr[key]+"⁆","@"+value,false,false,null);
+              singleReplace("⁅C" + arr[key] + "⁆", "@" + value, false, false, null);
             } catch (e) {
-              alert("Error @->[:] - "+e);
+              alert("Error @->[:] - " + e);
             };
           };
         };
-      }; 
+      };
       var farr = Object.keys(fnewdict);
-      for(var key in farr) {      
-        if (farr[key] != '' ) {
-          var regexp = "#"+farr[key];
-          var str = "⁅F"+farr[key]+"⁆";
+      for (var key in farr) {
+        if (farr[key] != '') {
+          var regexp = "#" + farr[key];
+          var str = "⁅F" + farr[key] + "⁆";
           //alert("Replace: "+regexp+ " -> "+str);
-          singleReplace(regexp, str, false, false);      
+          singleReplace(regexp, str, false, false);
         };
       };
-      for(var key in farr) {
+      for (var key in farr) {
         var value = fnewdict[farr[key]];
         if (value && farr[key]) {
           if (farr[key] != '' && farr[key] != value) {
@@ -477,31 +481,31 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
             //singleReplace("@"+arr[key],"[["+arr[key]+"]][:]"+value,false,false,null);
             try {
               //alert("Replace: F"+farr[key]+ " -> #"+value);
-              singleReplace("⁅F"+farr[key]+"⁆","#"+value,false,false,null);
+              singleReplace("⁅F" + farr[key] + "⁆", "#" + value, false, false, null);
             } catch (e) {
-              alert("Error #->[:] - "+e);
+              alert("Error #->[:] - " + e);
             };
           };
         };
 
-      }; 
+      };
       style[DocumentApp.Attribute.FOREGROUND_COLOR] = '#666666'; // null
       style[DocumentApp.Attribute.BACKGROUND_COLOR] = null; // null
       style[DocumentApp.Attribute.FONT_SIZE] = 6;
       //regexpRestyleOffset("@\\d",style,0,1);
       //regexpRestyleOffset("#\\d",style,0,1);  
       try {
-        singleReplace("[:]","@",false,false,null);
+        singleReplace("[:]", "@", false, false, null);
         // reinstate references
         /* singleReplace("⁅C","@", false, false);      
         singleReplace("⁅F","#", false, false);      
         singleReplace("⁆","", false, false);            */
       } catch (e) {
-        alert("Error [:]->@ - "+e);
+        alert("Error [:]->@ - " + e);
       };
     }
   } catch (e) {
-    alert("Error in changeBodyRefs: "+e);
+    alert("Error in changeBodyRefs: " + e);
   };
 }
 

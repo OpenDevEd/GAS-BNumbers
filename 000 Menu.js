@@ -4,6 +4,7 @@ function onOpen() {
 
 function Menu_HePaNumbering() {
   const activeStyle = getHeadingStyle();
+  const debugMode = getDebugMode();
 
   // Select H1 prefix
   const subMenuPrefixes = DocumentApp.getUi().createMenu('Select H1 prefix');
@@ -72,5 +73,12 @@ function Menu_HePaNumbering() {
     .addSubMenu(subMenuStyles)
     .addSubMenu(submenu_util)
     .addSubMenu(submenu_para);
+
+    if (debugMode === true){
+      menu.addItem('Turn off debug mode','turnOffDebugMode');
+    }else{
+      menu.addItem('Turn on debug mode','turnOnDebugMode');
+    }
+    
   return menu;
 }

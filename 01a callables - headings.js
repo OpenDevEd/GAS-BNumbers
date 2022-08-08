@@ -1,3 +1,33 @@
+// Returns debug mode (true or false) 
+// Menu_HePaNumbering, doNumberHeadingsAndLinks, numberHeadings use the function
+function getDebugMode() {
+  let debugMode = false;
+  try {
+    const debugModeProperty = getDocumentPropertyString("bNumbers_Debug_Mode");
+    if (debugModeProperty != null) {
+      if (debugModeProperty == "DEBUG_MODE_TRUE") {
+        debugMode = true;
+      }
+    }
+  }
+  catch (error) {
+    //Logger.log(' getDebugMode()) error' + error);
+  }
+  return debugMode;
+}
+
+// Menu 'Turn off debug mode'
+function turnOffDebugMode() {
+  setDocumentPropertyString("bNumbers_Debug_Mode", "DEBUG_MODE_FALSE");
+  onOpen();
+}
+
+// 'Turn on debug mode'
+function turnOnDebugMode() {
+  setDocumentPropertyString("bNumbers_Debug_Mode", "DEBUG_MODE_TRUE");
+  onOpen();
+}
+
 // Returns object headingStyle that describes current or default style
 // doNumberHeadings, removeAllHeadingNumbers, showCurrentStyle, Menu_HePaNumbering use the function
 function getHeadingStyle() {
@@ -102,7 +132,9 @@ function doNumberHeadingsAndLinks(numberHeadings = true, numbersInLinks = true, 
 
   internalHeadingLinksNew(numbersInLinks, resetFullLinkText, markInternalHeadingLinks, chtResult.allHeadingsObj, infoLinksObj);
 
-  if (infoLinksObj.changedLinks.length > 0) {
+  const debugMode = getDebugMode();
+
+  if (infoLinksObj.changedLinks.length > 0 && debugMode === true) {
     infoLinks = infoLinksObj.changedLinks.join('\n');
   }
 
