@@ -107,6 +107,11 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
       continue;
     }
 
+    if (eText.trim() == '') {
+      // continue if the paragraph is empty
+      continue;
+    }
+
     var patt = new RegExp(/Heading ?(\d)/i);
     var eLevel = patt.exec(eTypeString)[1];   // 1..6 based
     var cLevel = eLevel - 1; //0..5 based
@@ -181,6 +186,7 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
         }
       }
     }
+
     try {
       if (numStyle[eLevel - 1] === 'figure') {
         // alert("Hello figure.");
@@ -243,6 +249,7 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
     // end of numStyle[eLevel-1] === 'figure'
     // if requested compute new heading numbers
     var txt = '';
+
     try {
       if (add == true) {
         numbers[eLevel]++;
@@ -326,11 +333,12 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
             var placeholderStart = 0;
             var placeholderEnd = 0;
             var parent = e.getParent();
-            var d = DocumentApp.getActiveDocument();
+            //var d = DocumentApp.getActiveDocument();
             var parPosition = parent.getChildIndex(e);
-            var newPara = d.insertParagraph(parPosition, txt + ' ');
-            //Logger.log('txt=' + txt);
-            //Logger.log('txt eText=' + txt + eText);
+            // var newPara = d.insertParagraph(parPosition, txt + ' ');
+            var newPara = parent.insertParagraph(parPosition, txt + ' ');
+            // Logger.log('txt=' + txt);
+            // Logger.log('txt eText=' + txt + eText);
 
             // Update allHeadingsObj allHeadingsArray
             if (allHeadingsObj != null) {
@@ -348,8 +356,9 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
             // End. Update allHeadingsObj
 
             newPara.setAttributes(style);
+
             try {
-              e.merge(); // merge these two paragraphs       
+              e.merge(); // merge these two paragraphs   
             } catch (e) {
               // collect error messages, and show at the end
               errors += e + "\n";

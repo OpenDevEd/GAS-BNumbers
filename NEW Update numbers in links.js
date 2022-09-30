@@ -30,57 +30,34 @@ function collectHeadingTexts(doc) {
     const allLinks = [];
     const allHeadingParagraphs = new Object();
     const allHeadings = [];
-    let allHeadingsLastEl = -1;
-    let headingText;
-    let headingParagraph, headingId;
     requests = [];
     for (let i in bodyElements) {
-      headingParagraph = false;
-      if (bodyElements[i].paragraph) {
-        if (bodyElements[i].paragraph.paragraphStyle) {
-          if (bodyElements[i].paragraph.paragraphStyle.headingId) {
-            // Logger.log(bodyElements[i].paragraph);
-            // Logger.log(bodyElements[i].paragraph.paragraphStyle.headingId);
-            headingId = bodyElements[i].paragraph.paragraphStyle.headingId;
-            allHeadingParagraphs[headingId] = '';
-            allHeadings.push({ headingId: headingId, text: '' });
-            allHeadingsLastEl++;
-            headingParagraph = true;
-          }
-        }
-
-        if (bodyElements[i].paragraph.elements) {
-          bodyElements[i].paragraph.elements.forEach(function (item) {
-            if (item.textRun) {
-              // Collects links
-              if (item.textRun.textStyle) {
-                if (item.textRun.textStyle.link) {
-                  if (item.textRun.textStyle.link.headingId) {
-                    allLinks.push({ linkHeadingId: item.textRun.textStyle.link.headingId, content: item.textRun.content, startIndex: item.startIndex, endIndex: item.endIndex });
+      // If body element contains table
+      if (bodyElements[i].table) {
+        if (bodyElements[i].table.tableRows) {
+          for (let j in bodyElements[i].table.tableRows) {
+            if (bodyElements[i].table.tableRows[j].tableCells) {
+              for (let k in bodyElements[i].table.tableRows[j].tableCells) {
+                if (bodyElements[i].table.tableRows[j].tableCells[k].content) {
+                  for (let l in bodyElements[i].table.tableRows[j].tableCells[k].content) {
+                    if (bodyElements[i].table.tableRows[j].tableCells[k].content[l].paragraph) {
+                      collectHeadingTextsHelper(bodyElements[i].table.tableRows[j].tableCells[k].content[l].paragraph, allHeadingParagraphs, allHeadings, allLinks);
+                    }
                   }
                 }
               }
-              // End. Collects links
-
-              if (item.textRun.content && headingParagraph) {
-                // if (item.textRun.content.trim() != '') {
-                headingText = item.textRun.content.replace('\n', '');
-                allHeadingParagraphs[headingId] += headingText;
-                allHeadings[allHeadingsLastEl]['text'] += headingText;
-                //}
-              }
             }
-          });
+          }
+
         }
-        // When you press enter at the start of an existing heading, headingId still exists, but the paragraph doesn't have content, Doc shows "Heading no longer exists"
-        // "Heading no longer exists" case
-        if (allHeadingParagraphs[headingId] == '' && headingParagraph) {
-          delete allHeadingParagraphs[headingId];
-          allHeadings.pop();
-          allHeadingsLastEl--;
-        }
-        // End.  "Heading no longer exists" case
       }
+      // End. If body element contains table
+
+      // If body element contains paragraph
+      if (bodyElements[i].paragraph) {
+        collectHeadingTextsHelper(bodyElements[i].paragraph, allHeadingParagraphs, allHeadings, allLinks);
+      }
+      // End. If body element contains paragraph
     }
     //Logger.log(allLinks);
     return { status: 'ok', allHeadingsObj: allHeadingParagraphs, allHeadingsArray: allHeadings };
@@ -89,6 +66,58 @@ function collectHeadingTexts(doc) {
     return { status: 'error', message: 'Error in collectHeadingTexts: ' + error };
   }
 }
+
+// Checks paragraphs in body and paragraphs in tables
+function collectHeadingTextsHelper(paragraph, allHeadingParagraphs, allHeadings, allLinks) {
+  let headingParagraph = false;
+  let headingText, headingId;
+  if (paragraph.paragraphStyle) {
+    if (paragraph.paragraphStyle.headingId) {
+      // Logger.log(paragraph);
+      // Logger.log(paragraph.paragraphStyle.headingId);
+      headingId = paragraph.paragraphStyle.headingId;
+      allHeadingParagraphs[headingId] = '';
+      allHeadings.push({ headingId: headingId, text: '' });
+      allHeadingsLastEl = allHeadings.length - 1;
+      headingParagraph = true;
+    }
+  }
+
+  if (paragraph.elements) {
+    paragraph.elements.forEach(function (item) {
+      if (item.textRun) {
+        // Collects links
+        if (item.textRun.textStyle) {
+          if (item.textRun.textStyle.link) {
+            if (item.textRun.textStyle.link.headingId) {
+              allLinks.push({ linkHeadingId: item.textRun.textStyle.link.headingId, content: item.textRun.content, startIndex: item.startIndex, endIndex: item.endIndex });
+            }
+          }
+        }
+        // End. Collects links
+
+        if (item.textRun.content && headingParagraph) {
+          // if (item.textRun.content.trim() != '') {
+          headingText = item.textRun.content.replace('\n', '');
+          allHeadingParagraphs[headingId] += headingText;
+          allHeadings[allHeadingsLastEl]['text'] += headingText;
+          //}
+        }
+      }
+    });
+  }
+  // When you press enter at the start of an existing heading, headingId still exists, but the paragraph doesn't have content, Doc shows "Heading no longer exists"
+  // "Heading no longer exists" case
+  if (allHeadingParagraphs[headingId] == '' && headingParagraph) {
+    delete allHeadingParagraphs[headingId];
+    allHeadings.pop();
+    allHeadingsLastEl--;
+  }
+  // End.  "Heading no longer exists" case
+
+
+}
+
 
 // internalHeadingLinksNew uses the function
 function changeAllBodyLinks(doc, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks) {
@@ -147,7 +176,7 @@ function changeAllLinks(element, allHeadingsObj, infoLinksObj, updateNumbers, re
             if (updateNumbers === true || resetFullLinkText === true) {
               headingText = allHeadingsObj[headingIdLink];
               if (headingText != text) {
-            
+
 
                 if (resetFullLinkText === true) {
                   newText = headingText;
