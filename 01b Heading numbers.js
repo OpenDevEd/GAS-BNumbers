@@ -112,6 +112,11 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
       continue;
     }
 
+    if (/About this document|Abbreviations|Acronyms|Executive summary|Appendix|Annex/i.test(eText)) {
+      // continue if the heading is About this document|Abbreviations|Acronyms|Executive summary|Appendix|Annex
+      continue;
+    }
+
     var patt = new RegExp(/Heading ?(\d)/i);
     var eLevel = patt.exec(eTypeString)[1];   // 1..6 based
     var cLevel = eLevel - 1; //0..5 based
