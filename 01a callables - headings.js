@@ -76,10 +76,25 @@ function getHeadingStyle() {
     if (headingStyles[BNumbers_HeadingStyle_Property]['overrideH1PrefixWithCustomPrefix'] === true) {
       headingStyle.prefixlead[0] = headingStyle.prefixText;
     }
+    if (headingStyles[BNumbers_HeadingStyle_Property]['overrideAllHPrefixWithCustomPrefix'] === true) {
+      for (style in headingStyle.xstyle) {
+        if (headingStyle.xstyle[style] != '-') {
+          if (headingStyle.xstyle[style] == 'figure') {
+            const regEx = new RegExp(headingStyle.prefixText + '$', 'i');
+            if (regEx.test(headingStyle.prefixlead[style]) === false) {
+              headingStyle.prefixlead[style] = headingStyle.prefixlead[style] + headingStyle.prefixText;
+            }
+          } else {
+            headingStyle.prefixlead[style] = headingStyle.prefixText;
+          }
+        }
+      }
+    }
   }
   catch (error) {
     //Logger.log(' updateStyle() error' + error);
   }
+  Logger.log('get style %s',  headingStyle);
   return headingStyle;
 }
 
@@ -153,7 +168,8 @@ function updateFigureNumbers(run) {
   // saveHeadingStyleToDocumentProperty(headingStyle);
   //if (run) {
   var xstyle = ['', '', '', '', '', 'figure'];
-  numberHeadings(true, false, -1, xstyle);
+  const headingStyle = getHeadingStyle();
+  numberHeadings(true, false, -1, xstyle, headingStyle.prefixlead);
   //}
 };
 
@@ -161,6 +177,6 @@ function updateFigureNumbers(run) {
 // Removes all heading numbers of current heading style
 function removeAllHeadingNumbers() {
   const headingStyle = getHeadingStyle();
-  numberHeadings(false, false, headingStyle.depth, headingStyle.xstyle);
+  numberHeadings(false, false, headingStyle.depth, headingStyle.xstyle, headingStyle.prefixlead);
 }
 

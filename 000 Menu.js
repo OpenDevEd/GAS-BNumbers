@@ -7,7 +7,7 @@ function Menu_HePaNumbering() {
   const debugMode = getDebugMode();
 
   // Select H1 prefix
-  const subMenuPrefixes = DocumentApp.getUi().createMenu('Select H1 prefix');
+  const subMenuPrefixes = DocumentApp.getUi().createMenu('Select prefix');
   let selectedPrefixMarker = '';
   for (let prefix in prefixes) {
     if (prefix.toString() == activeStyle.prefix) {
@@ -35,8 +35,8 @@ function Menu_HePaNumbering() {
     if (headingStyles[styleName]['separatorAbove'] === true) {
       subMenuStyles.addSeparator();
     }
-    if (headingStyles[styleName]['overrideH1PrefixWithCustomPrefix'] === true) {
-      menuItemText = menuItemText.replace('~PREFIX~', activeStyle.prefixText);
+    if (headingStyles[styleName]['overrideH1PrefixWithCustomPrefix'] === true || headingStyles[styleName]['overrideAllHPrefixWithCustomPrefix'] === true) {
+      menuItemText = menuItemText.replaceAll('~PREFIX~', activeStyle.prefixText);
     }
     subMenuStyles.addItem(menuItemText + ' ' + selectedStyleMarker, 'headingStyles.' + styleName + '.run');
     if (headingStyles[styleName]['subMenuBelow'] === true) {

@@ -5,7 +5,7 @@ function showCurrentStyle() {
   const activeStyle = getHeadingStyle();
   onOpen();
   let menuItemText = headingStyles[activeStyle.value]['name'];
-  menuItemText = menuItemText.replace('~PREFIX~', activeStyle.prefixText);
+  menuItemText = menuItemText.replaceAll('~PREFIX~', activeStyle.prefixText);
   //ui.alert(menuItemText);
   alert(menuItemText);
 }
@@ -44,11 +44,19 @@ const headingStyles = {
   "numberHeadingsAddChapter2345": {
     "name": "H1(~PREFIX~#)/H2-H5/figure",
     "replacePrefix": true,
-    "subMenuBelow": true,
     "xstyle": ['1#', '1', '1', '1', '1', 'figure'],
     "prefixlead": [null, null, null, null, null, 'Figure '],
     "overrideH1PrefixWithCustomPrefix": true,
     "numberDepth": 5,
+    "run": function () { activateHeadingStyle(this); }
+  },
+    "numberHeadingsAddPrefixAllNumberedAndFigures": {
+    "name": "(~PREFIX~)H1-H3/-/-/figure (~PREFIX~)",
+    "subMenuBelow": true,
+    "xstyle": ['1', '1', '1', '-', '-', 'figure'],
+    "prefixlead": [null, null, null, null, null, 'Figure '],
+    "overrideAllHPrefixWithCustomPrefix": true,
+    "numberDepth": 3,
     "run": function () { activateHeadingStyle(this); }
   },
   "numberHeadingsAdd3Figure": {
@@ -144,6 +152,32 @@ const prefixes = {
     "value": "Session ",
     "run": function () { activatePrefix(this); }
   },
+
+  "zeroDot": {
+    "name": "0.",
+    "func": "setZeroDot",
+    "value": "0.",
+    "run": function () { activatePrefix(this); }
+  },
+  "oneDot": {
+    "name": "1.",
+    "func": "setOneDot",
+    "value": "1.",
+    "run": function () { activatePrefix(this); }
+  },
+  "twoDot": {
+    "name": "2.",
+    "func": "setTwoDot",
+    "value": "2.",
+    "run": function () { activatePrefix(this); }
+  },  
+  "threeDot": {
+    "name": "3.",
+    "func": "setThreeDot",
+    "value": "3.",
+    "run": function () { activatePrefix(this); }
+  },
+
   "Custom": {
     "name": "<enter>",
     "func": "enterPrefix",

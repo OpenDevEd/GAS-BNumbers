@@ -73,6 +73,8 @@ Where there is no existing number, we could (a) insert from start, and then rest
 */
 
 function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, prefixchar, postfixchar, allHeadingsObj, allHeadingsArray) {
+
+  //Logger.log('add %s, changeBodyRefs  %s, maxLevel %s, numStyle %s, prefixstr %s, prefixchar %s, postfixchar %s', add, changeBodyRefs, maxLevel, numStyle, prefixstr, prefixchar, postfixchar);
   // alert("a="+add+";"+changeBodyRefs+maxLevel+";"+numStyle);
   /*  if (prefixstr) {
       alert("signalling");
@@ -193,61 +195,67 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
     }
 
     try {
-      if (numStyle[eLevel - 1] === 'figure') {
-        // alert("Hello figure.");
-        // ... then remove a figure number / string, irrespective of level, see different regexp below.
-        //      errors += "\nfigure: \n";
-        // update these both
-        //        var patt2 = new RegExp(/^\⸢(Table|Figure|Image|Diagram|Tabelle|Abbildung|Bild|Diagramm) (\-?\d+)\.\⸥ ?/);
-        var patt2 = new RegExp(/^(Table|Figure|Image|Diagram|Tabelle|Abbildung|Bild|Diagramm) (\-?\d+(\.\d+)?)\. ?/);
-        //        var rangeElement = e.asText().findText("^\⸢(Table|Figure|Image|Diagram|Tabelle|Abbildung|Bild|Diagramm) (\\-?\\d+)\\.?\⸥ ?");      
-        var rangeElement = e.asText().findText("^(Table|Figure|Image|Diagram|Tabelle|Abbildung|Bild|Diagramm) (\\-?\\d+(\\.\\d+)?)\\. ?");
-        var figureNumber = "";
-        if (rangeElement) {
-          if (rangeElement.isPartial()) {
-            var startOffset = rangeElement.getStartOffset();
-            var endOffset = rangeElement.getEndOffsetInclusive();
-            figureType = rangeElement.getElement().getText();
-            if (figureType === null) {
-              alert("no figure type!");
-            } else {
-              //          errors +=figureType;
-              try {
-                var sections = patt2.exec(figureType);
-                // alert("Sections: "+sections.length);
-                figureType = sections[1];
-                figureNumber = sections[2];
-              } catch (e) {
-                alert("Error figureType: " + e);
-              };
-              if (figureType === null) {
-                alert("no figure type! 2");
-              };
-            };
-            // Delete the numbering:
-            rangeElement.getElement().asText().deleteText(startOffset, endOffset);
+    if (numStyle[eLevel - 1] === 'figure') {
+      //Logger.log('Prefix figure %s ', prefixstr[eLevel - 1]);
+      // alert("Hello figure.");
+      // ... then remove a figure number / string, irrespective of level, see different regexp below.
+      //      errors += "\nfigure: \n";
+      // update these both
+
+      var regExpString = "^(" + prefixstr[eLevel - 1] + "|Table|Figure|Image|Diagram|Tabelle|Abbildung|Bild|Diagramm) ?(\\-?\\d+(\\.\\d+)?)\\. ?";
+      //Logger.log('regExpString %s', regExpString);
+      var patt2 = new RegExp(regExpString);
+      //        var rangeElement = e.asText().findText("^\⸢(Table|Figure|Image|Diagram|Tabelle|Abbildung|Bild|Diagramm) (\\-?\\d+)\\.?\⸥ ?");
+      var rangeElement = e.asText().findText(regExpString);
+      var figureNumber = "";
+      if (rangeElement) {
+        if (rangeElement.isPartial()) {
+          var startOffset = rangeElement.getStartOffset();
+          var endOffset = rangeElement.getEndOffsetInclusive();
+          figureType = rangeElement.getElement().getText();
+          if (figureType === null) {
+            alert("no figure type!");
           } else {
-            // This needs thinking through:
-            figureNumber = rangeElement.getElement().getText();
-            rangeElement.getElement().removeFromParent();
-            figureType = rangeElement.getElement().getText();
-            //          errors += figureType;
-            if (figureType == null) {
-              alert("no figure type! 3");
+            //          errors +=figureType;
+            try {
+
+              var sections = patt2.exec(figureType);
+              // alert("Sections: "+sections.length);
+              figureType = sections[1];
+              figureNumber = sections[2];
+            } catch (e) {
+              alert("Error figureType: " + e);
             };
-          }
+            if (figureType === null) {
+              alert("no figure type! 2");
+            };
+          };
+          // Delete the numbering:
+          rangeElement.getElement().asText().deleteText(startOffset, endOffset);
         } else {
-          // alert("Hello not figure.");
-          // errors+='THis is another use of H6... likely an error in formatting your doc: You requested figure, but H6 is not formatted accordingly';
-        };
-        if (figureType == null) {
-          figureType = "Figure";
-        };
-        //alert("Fg - "+figureNumber+": "+figureType);
-        // record the string in the dictionary of heading numbers
-        fndict[figureNumber] = figureNumber;
-        currhn = figureNumber;
+          // This needs thinking through:
+          figureNumber = rangeElement.getElement().getText();
+          rangeElement.getElement().removeFromParent();
+          figureType = rangeElement.getElement().getText();
+          //          errors += figureType;
+          if (figureType == null) {
+            alert("no figure type! 3");
+          };
+        }
+      } else {
+        // alert("Hello not figure.");
+        // errors+='THis is another use of H6... likely an error in formatting your doc: You requested figure, but H6 is not formatted accordingly';
       };
+      if (figureType == null) {
+        figureType = "Figure";
+      };
+      //alert("Fg - "+figureNumber+": "+figureType);
+      // record the string in the dictionary of heading numbers
+      fndict[figureNumber] = figureNumber;
+      currhn = figureNumber;
+    };
+
+
     } catch (error) {
       alert('Error in figure: ' + error);
     };
