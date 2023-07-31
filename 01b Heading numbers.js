@@ -114,7 +114,7 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
       continue;
     }
 
-    if (/About this document|Abbreviations|Acronyms|Executive summary|Appendix|Annex/i.test(eText)) {
+    if (/^(About this document|Abbreviations|Acronyms|Executive summary|Appendix|Annex|Contents)$/i.test(eText)) {
       // continue if the heading is About this document|Abbreviations|Acronyms|Executive summary|Appendix|Annex
       continue;
     }
