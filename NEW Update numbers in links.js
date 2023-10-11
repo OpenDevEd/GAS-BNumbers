@@ -63,7 +63,11 @@ function collectHeadingTexts(doc) {
     return { status: 'ok', allHeadingsObj: allHeadingParagraphs, allHeadingsArray: allHeadings };
   }
   catch (error) {
-    return { status: 'error', message: 'Error in collectHeadingTexts: ' + error };
+    if (error.toString().includes('API call to docs.documents.get failed with error: Internal error encountered.')) {
+      return { status: 'error', message: 'Sorry, bNumbers has encountered an error. It’s a known error we haven’t been able to trace yet. However, you can fix it by copying the contents of your document to a new document and running bNumbers in the new document. (Error in collectHeadingTexts: Error in collectHeadingTexts: ' + error + ')' };
+    } else {
+      return { status: 'error', message: 'Error in collectHeadingTexts: ' + error };
+    }
   }
 }
 
