@@ -72,6 +72,18 @@ Where there is no existing number, we could (a) insert from start, and then rest
 
 */
 
+function convertListItemsIntoParagraphs(p, headingsButListItems) {
+  for (let i in headingsButListItems) {
+    var listItem = headingsButListItems[i][0];
+    var heading = listItem.getHeading();
+    var parent = listItem.getParent();
+    var childIndex = listItem.getParent().getChildIndex(listItem);
+    const newPar = parent.insertParagraph(childIndex, listItem.getText()).setHeading(heading);
+    p[headingsButListItems[i][1]] = newPar;
+    listItem.removeFromParent();
+  }
+}
+
 function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, prefixchar, postfixchar, allHeadingsObj, allHeadingsArray) {
 
   //Logger.log('add %s, changeBodyRefs  %s, maxLevel %s, numStyle %s, prefixstr %s, prefixchar %s, postfixchar %s', add, changeBodyRefs, maxLevel, numStyle, prefixstr, prefixchar, postfixchar);
@@ -86,7 +98,8 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
   // Existing headsing need to be removed.
   var doc = DocumentApp.getActiveDocument();
   var body = doc.getBody();
-  var p = doc.getParagraphs();
+  const p = [];
+  var pCheck = doc.getParagraphs();
   var numbers = [0, 0, 0, 0, 0, 0, 0];
   var errors = null;
   var isAppendix = false;
@@ -98,26 +111,83 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
   var substr = [];
 
 
+  for (var i in pCheck) {
+    var e = pCheck[i];
+    var eText = e.getText() + '';
+    var eTypeString = e.getHeading().toString();
+
+    if (!eTypeString.match(/Heading ?\d/i)) {
+      // continue if the paragraph is not a heading
+      continue;
+    }
+    if (eText.trim() == '') {
+      // continue if the paragraph is empty
+      continue;
+    }
+    if (/^(About this document|Abbreviations|Acronyms|Executive summary|Appendix|Annex|Contents)$/i.test(eText)) {
+      // continue if the heading is About this document|Abbreviations|Acronyms|Executive summary|Appendix|Annex
+      continue;
+    }
+
+    // Logger.log('type= ' + pCheck[i].getType());
+    p.push(pCheck[i]);
+  }
+
+  const headingsButListItems = [];
+  const neitherParagraphNorListItem = [];
+  const headingsButListItemsTexts = [];
+  const neitherParagraphNorListItemTexts = [];
+  for (let i = 0; i < p.length; i++) {
+    const pType = p[i].getType();
+    if (pType === DocumentApp.ElementType.PARAGRAPH) {
+      // Perfect
+    } else if (pType === DocumentApp.ElementType.LIST_ITEM) {
+      headingsButListItems.push([p[i], i]);
+      headingsButListItemsTexts.push(p[i].getText());
+    } else {
+      neitherParagraphNorListItem.push([p[i], i]);
+      neitherParagraphNorListItemTexts.push(p[i].getText() + ' ' + pType);
+    }
+  }
+
+  let wrongHeadings = '';
+  let listItemsIssue = false;
+  let unknownIssue = false;
+  if (headingsButListItems.length > 0) {
+    wrongHeadings += '\nList items:\n';
+    wrongHeadings += headingsButListItemsTexts.join('\n');
+    listItemsIssue = true;
+  }
+  if (neitherParagraphNorListItem.length > 0) {
+    wrongHeadings += '\nOther non-paragraph elements:\n';
+    wrongHeadings += neitherParagraphNorListItemTexts.join('\n');
+    unknownIssue = true;
+  }
+
+  let userResponse;
+  if (listItemsIssue || unknownIssue) {
+    const addText = unknownIssue ? 'or/and other non-paragraph elements' : '';
+    userResponse = getConfirmationFromUser('This document contains headings that are incorrectly formatted as numbered lists ' + addText + '. Would you like to apply proper formatting and numbering?' + wrongHeadings);
+
+    if (userResponse === true) {
+      if (listItemsIssue) {
+        convertListItemsIntoParagraphs(p, headingsButListItems);
+      }
+      if (unknownIssue) {
+        alert('Fix other non-paragraph elements manually.');
+        return 0;
+      }
+    } else {
+      return 0;
+    }
+  }
+
   // Go through all paragraphs
   for (var i in p) {
     var e = p[i];
     var eText = e.getText() + '';
     var eTypeString = e.getHeading().toString();
     // alert('HNy '+i+"/"+p.length+" "+eTypeString);
-    if (!eTypeString.match(/Heading ?\d/i)) {
-      // continue if the paragraph is not a heading
-      continue;
-    }
-
-    if (eText.trim() == '') {
-      // continue if the paragraph is empty
-      continue;
-    }
-
-    if (/^(About this document|Abbreviations|Acronyms|Executive summary|Appendix|Annex|Contents)$/i.test(eText)) {
-      // continue if the heading is About this document|Abbreviations|Acronyms|Executive summary|Appendix|Annex
-      continue;
-    }
 
     var patt = new RegExp(/Heading ?(\d)/i);
     var eLevel = patt.exec(eTypeString)[1];   // 1..6 based
@@ -195,65 +265,65 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
     }
 
     try {
-    if (numStyle[eLevel - 1] === 'figure') {
-      //Logger.log('Prefix figure %s ', prefixstr[eLevel - 1]);
-      // alert("Hello figure.");
-      // ... then remove a figure number / string, irrespective of level, see different regexp below.
-      //      errors += "\nfigure: \n";
-      // update these both
+      if (numStyle[eLevel - 1] === 'figure') {
+        //Logger.log('Prefix figure %s ', prefixstr[eLevel - 1]);
+        // alert("Hello figure.");
+        // ... then remove a figure number / string, irrespective of level, see different regexp below.
+        //      errors += "\nfigure: \n";
+        // update these both
 
-      var regExpString = "^(" + prefixstr[eLevel - 1] + "|Table|Figure|Image|Diagram|Tabelle|Abbildung|Bild|Diagramm) ?(\\-?\\d+(\\.\\d+)?)\\. ?";
-      //Logger.log('regExpString %s', regExpString);
-      var patt2 = new RegExp(regExpString);
-      //        var rangeElement = e.asText().findText("^\⸢(Table|Figure|Image|Diagram|Tabelle|Abbildung|Bild|Diagramm) (\\-?\\d+)\\.?\⸥ ?");
-      var rangeElement = e.asText().findText(regExpString);
-      var figureNumber = "";
-      if (rangeElement) {
-        if (rangeElement.isPartial()) {
-          var startOffset = rangeElement.getStartOffset();
-          var endOffset = rangeElement.getEndOffsetInclusive();
-          figureType = rangeElement.getElement().getText();
-          if (figureType === null) {
-            alert("no figure type!");
-          } else {
-            //          errors +=figureType;
-            try {
-
-              var sections = patt2.exec(figureType);
-              // alert("Sections: "+sections.length);
-              figureType = sections[1];
-              figureNumber = sections[2];
-            } catch (e) {
-              alert("Error figureType: " + e);
-            };
+        var regExpString = "^(" + prefixstr[eLevel - 1] + "|Table|Figure|Image|Diagram|Tabelle|Abbildung|Bild|Diagramm) ?(\\-?\\d+(\\.\\d+)?)\\. ?";
+        //Logger.log('regExpString %s', regExpString);
+        var patt2 = new RegExp(regExpString);
+        //        var rangeElement = e.asText().findText("^\⸢(Table|Figure|Image|Diagram|Tabelle|Abbildung|Bild|Diagramm) (\\-?\\d+)\\.?\⸥ ?");
+        var rangeElement = e.asText().findText(regExpString);
+        var figureNumber = "";
+        if (rangeElement) {
+          if (rangeElement.isPartial()) {
+            var startOffset = rangeElement.getStartOffset();
+            var endOffset = rangeElement.getEndOffsetInclusive();
+            figureType = rangeElement.getElement().getText();
             if (figureType === null) {
-              alert("no figure type! 2");
+              alert("no figure type!");
+            } else {
+              //          errors +=figureType;
+              try {
+
+                var sections = patt2.exec(figureType);
+                // alert("Sections: "+sections.length);
+                figureType = sections[1];
+                figureNumber = sections[2];
+              } catch (e) {
+                alert("Error figureType: " + e);
+              };
+              if (figureType === null) {
+                alert("no figure type! 2");
+              };
             };
-          };
-          // Delete the numbering:
-          rangeElement.getElement().asText().deleteText(startOffset, endOffset);
+            // Delete the numbering:
+            rangeElement.getElement().asText().deleteText(startOffset, endOffset);
+          } else {
+            // This needs thinking through:
+            figureNumber = rangeElement.getElement().getText();
+            rangeElement.getElement().removeFromParent();
+            figureType = rangeElement.getElement().getText();
+            //          errors += figureType;
+            if (figureType == null) {
+              alert("no figure type! 3");
+            };
+          }
         } else {
-          // This needs thinking through:
-          figureNumber = rangeElement.getElement().getText();
-          rangeElement.getElement().removeFromParent();
-          figureType = rangeElement.getElement().getText();
-          //          errors += figureType;
-          if (figureType == null) {
-            alert("no figure type! 3");
-          };
-        }
-      } else {
-        // alert("Hello not figure.");
-        // errors+='THis is another use of H6... likely an error in formatting your doc: You requested figure, but H6 is not formatted accordingly';
+          // alert("Hello not figure.");
+          // errors+='THis is another use of H6... likely an error in formatting your doc: You requested figure, but H6 is not formatted accordingly';
+        };
+        if (figureType == null) {
+          figureType = "Figure";
+        };
+        //alert("Fg - "+figureNumber+": "+figureType);
+        // record the string in the dictionary of heading numbers
+        fndict[figureNumber] = figureNumber;
+        currhn = figureNumber;
       };
-      if (figureType == null) {
-        figureType = "Figure";
-      };
-      //alert("Fg - "+figureNumber+": "+figureType);
-      // record the string in the dictionary of heading numbers
-      fndict[figureNumber] = figureNumber;
-      currhn = figureNumber;
-    };
 
 
     } catch (error) {

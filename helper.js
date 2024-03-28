@@ -35,9 +35,9 @@ function getValueFromUser(title,text, defaultOK, defaultCancel, defaultClose) {
 function getConfirmationFromUser(text) {
   // Display a dialog box with a message and "Yes" and "No" buttons.
   var ui = DocumentApp.getUi();
-  var response = ui.alert(text, ui.ButtonSet.OK_CANCEL);
+  var response = ui.alert(text, ui.ButtonSet.YES_NO);
   // Process the user's response.
-  if (response == ui.Button.OK) {
+  if (response == ui.Button.YES) {
     return true;
   } else {
     return false;
