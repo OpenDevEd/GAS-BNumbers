@@ -1,5 +1,5 @@
 
-// enterPrefix, prefixHeadings, sequentialNumbers use the function
+// enterPrefix, prefixHeadings, sequentialNumbers, ignoredTextEditSetting use the function
 function getValueFromUser(title,text, defaultOK, defaultCancel, defaultClose) {
   text = text || "Please enter a value.";
   defaultOK = defaultOK || "";
@@ -31,7 +31,7 @@ function getValueFromUser(title,text, defaultOK, defaultCancel, defaultClose) {
   return null;
 }
 
-// out-of-use
+// ignoredTextShowCurrentSetting
 function getConfirmationFromUser(text) {
   // Display a dialog box with a message and "Yes" and "No" buttons.
   var ui = DocumentApp.getUi();

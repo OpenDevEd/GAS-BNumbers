@@ -110,6 +110,7 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
 
   var substr = [];
 
+  let ignoredTextRegex;
 
   for (var i in pCheck) {
     var e = pCheck[i];
@@ -120,13 +121,20 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
       // continue if the paragraph is not a heading
       continue;
     }
-    if (eText.trim() == '') {
+
+    eText = eText.trim();
+
+    if (eText == '') {
       // continue if the paragraph is empty
       continue;
     }
-    if (/^(About this document|Abbreviations|Acronyms|Executive summary|Appendix|Annex|Contents)$/i.test(eText)) {
-      // continue if the heading is About this document|Abbreviations|Acronyms|Executive summary|Appendix|Annex
-      continue;
+
+    ignoredTextRegex = getIgnoredTextRegex();
+    if (ignoredTextRegex !== '') {
+      if (ignoredTextRegex.test(eText)) {
+        // continue if the heading is matching ignoredTextRegex
+        continue;
+      }
     }
 
     // Logger.log('type= ' + pCheck[i].getType());

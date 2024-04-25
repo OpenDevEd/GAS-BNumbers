@@ -94,7 +94,7 @@ function getHeadingStyle() {
   catch (error) {
     //Logger.log(' updateStyle() error' + error);
   }
-  Logger.log('get style %s',  headingStyle);
+  //Logger.log('get style %s',  headingStyle);
   return headingStyle;
 }
 

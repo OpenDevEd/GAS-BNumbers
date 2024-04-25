@@ -18,10 +18,14 @@ function Menu_HePaNumbering() {
     subMenuPrefixes.addItem(prefixes[prefix]['name'] + ' ' + selectedPrefixMarker, 'prefixes.' + prefix + '.run');
   }
   // End. Select H1 prefix
-  
+
   // Select style submenu
   const subMenuStyles = DocumentApp.getUi().createMenu('Select style')
-    .addItem('Show current style', 'showCurrentStyle');
+    .addItem('Show current style', 'showCurrentStyle')
+    .addSubMenu(DocumentApp.getUi().createMenu('Configure ignored text')
+      .addItem('Show current setting', 'ignoredTextShowCurrentSetting')
+      .addItem('Edit setting', 'ignoredTextEditSetting')
+      .addItem('Restore default', 'ignoredTextRestoreDefault'));
 
   let selectedStyleMarker = '';
   let menuItemText;
@@ -74,11 +78,11 @@ function Menu_HePaNumbering() {
     .addSubMenu(submenu_util)
     .addSubMenu(submenu_para);
 
-    if (debugMode === true){
-      menu.addItem('Turn off debug mode','turnOffDebugMode');
-    }else{
-      menu.addItem('Turn on debug mode','turnOnDebugMode');
-    }
-    
+  if (debugMode === true) {
+    menu.addItem('Turn off debug mode', 'turnOffDebugMode');
+  } else {
+    menu.addItem('Turn on debug mode', 'turnOnDebugMode');
+  }
+
   return menu;
 }
