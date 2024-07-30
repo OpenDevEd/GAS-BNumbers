@@ -81,6 +81,13 @@ const headingStyles = {
     "numberDepth": 5,
     "run": function () { activateHeadingStyle(this); }
   },
+
+  "boldFugureH6": {
+    "name": "Bold intro text for H6 (Table, Figure, Box)",
+    "separatorAbove": true,
+    "run": function () { activateBoldFigureH6Settings(); }
+  },
+
   "numberHeadingsAdd1WithLinksOrNot": {
     "name": "H1",
     "separatorAbove": true,

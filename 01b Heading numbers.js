@@ -190,6 +190,10 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
     }
   }
 
+  // Bold intro text for H6 Settings
+  const { style: boldFugureH6 } = getBoldFigureStyle(true);
+  const flagBoldFugureH6 = boldFugureH6 === 'yes' ? true : false;
+
   // Go through all paragraphs
   for (var i in p) {
     var e = p[i];
@@ -447,9 +451,25 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
             // End. Update allHeadingsObj
 
             newPara.setAttributes(style);
-
+            // Logger.log(i+' + ' + newPara.asText().getText());
             try {
-              e.merge(); // merge these two paragraphs   
+              e.merge(); // merge these two paragraphs
+
+              // Bold intro text for H6 (Table, Figure, Box) 
+              if (flagBoldFugureH6 && eTypeString.match(/Heading ?6/i)) {
+                const eTextUpdated = newPara.asText().getText().trim();
+                const style = {};
+                style[DocumentApp.Attribute.BOLD] = true;
+                style[DocumentApp.Attribute.ITALIC] = false;
+                const checkTableBoxFigure = /^(Figure|Box|Table) (\d+|X)\.?\d*\. /.exec(eTextUpdated);
+                if (checkTableBoxFigure != null) {
+                  newPara.editAsText().setAttributes(0, checkTableBoxFigure[0].length - 1, style)
+                }
+              }
+              // End. Bold intro text for H6 (Table, Figure, Box)
+
+
+
             } catch (e) {
               // collect error messages, and show at the end
               errors += e + "\n";

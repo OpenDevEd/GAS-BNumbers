@@ -31,10 +31,15 @@ function Menu_HePaNumbering() {
   let menuItemText;
   for (let styleName in headingStyles) {
     menuItemText = headingStyles[styleName]['name'];
-    if (styleName.toString() == activeStyle.value) {
-      selectedStyleMarker = activeStyle.marker;
+    if (styleName.toString() === 'boldFugureH6') {
+      const boldFugureH6Style = getBoldFigureStyle(true);
+      selectedStyleMarker = boldFugureH6Style.marker;
     } else {
-      selectedStyleMarker = '';
+      if (styleName.toString() == activeStyle.value) {
+        selectedStyleMarker = activeStyle.marker;
+      } else {
+        selectedStyleMarker = '';
+      }
     }
     if (headingStyles[styleName]['separatorAbove'] === true) {
       subMenuStyles.addSeparator();
