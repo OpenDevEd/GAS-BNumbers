@@ -191,8 +191,12 @@ function numberHeadings(add, changeBodyRefs, maxLevel, numStyle, prefixstr, pref
   }
 
   // Bold intro text for H6 Settings
-  const { style: boldFugureH6 } = getBoldFigureStyle(true);
+  let { style: boldFugureH6, marker:currentMarker } = getBoldFigureStyle(true);
   const flagBoldFugureH6 = boldFugureH6 === 'yes' ? true : false;
+  if (currentMarker === '◯' && numStyle[5] === 'figure') {
+    setDocumentPropertyString('BOLD_FIGURE_H6_SETTINGS', 'yes');
+    onOpen();
+  }
 
   // Go through all paragraphs
   for (var i in p) {
