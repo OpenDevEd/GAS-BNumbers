@@ -1,9 +1,12 @@
 // doNumberHeadingsAndLinks use the function
 function internalHeadingLinksNew(updateNumbers, resetFullLinkText, markInternalHeadingLinks, allHeadingsObj, infoLinksObj) {
+  const ui = DocumentApp.getUi();
   try {
     const doc = DocumentApp.getActiveDocument();
-    changeAllBodyLinks(doc, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks);
-    changeAllFootnotesLinks(doc, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks);
+    const { style: withWithoutDots } = getSettings(true, 'withoutDots', withWithoutDotsStyles, 'WITH_WITHOUT_DOTS_SETTINGS');
+    const withoutDots = withWithoutDots === 'withoutDots' ? true : false;
+    changeAllBodyLinks(doc, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks, withoutDots);
+    changeAllFootnotesLinks(doc, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks, withoutDots);
   }
   catch (error) {
     ui.alert('Error in internalHeadingLinksNew: ' + error);
@@ -124,26 +127,26 @@ function collectHeadingTextsHelper(paragraph, allHeadingParagraphs, allHeadings,
 
 
 // internalHeadingLinksNew uses the function
-function changeAllBodyLinks(doc, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks) {
+function changeAllBodyLinks(doc, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks, withoutDots) {
   const element = doc.getBody();
-  changeAllLinks(element, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks);
+  changeAllLinks(element, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks, withoutDots);
 }
 
 // internalHeadingLinksNew uses the function
-function changeAllFootnotesLinks(doc, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks) {
+function changeAllFootnotesLinks(doc, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks, withoutDots) {
   const footnotes = doc.getFootnotes();
   let footnote, numChildren;
   for (let i in footnotes) {
     footnote = footnotes[i].getFootnoteContents();
     numChildren = footnote.getNumChildren();
     for (let j = 0; j < numChildren; j++) {
-      changeAllLinks(footnote.getChild(j), allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks);
+      changeAllLinks(footnote.getChild(j), allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks, withoutDots);
     }
   }
 }
 
 // changeAllBodyLinks, changeAllFootnotesLinks use the function
-function changeAllLinks(element, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks) {
+function changeAllLinks(element, allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks, withoutDots) {
 
   let text, newText, start, end, indices, partAttributes, numChildren, getIndexFlag, insertMarkerFlag, itsBrokenLink;
   const elementType = String(element.getType());
@@ -179,7 +182,7 @@ function changeAllLinks(element, allHeadingsObj, infoLinksObj, updateNumbers, re
           } else {
             if (updateNumbers === true || resetFullLinkText === true) {
               headingText = allHeadingsObj[headingIdLink];
-              if (headingText != text) {
+              // if (headingText != text) {
 
 
                 if (resetFullLinkText === true) {
@@ -188,17 +191,26 @@ function changeAllLinks(element, allHeadingsObj, infoLinksObj, updateNumbers, re
                 } else {
 
                   checkLink = /((\d+\.?){1,5})/.exec(text);
-                  //Logger.log(checkLink);
+                  // Logger.log(checkLink);
                   if (checkLink != null) {
                     linkNumber = checkLink[0];
                     checkHeading = /((\d+\.?){1,5})/.exec(headingText);
-                    //Logger.log(checkHeading);
+                    // Logger.log(checkHeading);
                     if (checkHeading != null) {
                       headingNumer = checkHeading[0];
-                      //Logger.log('headingNumer=' + headingNumer + ' linkNumber=' + linkNumber);
-                      if (linkNumber != headingNumer) {
-                        newText = text.replace(linkNumber, headingNumer);
-                        //Logger.log('newText=' + newText + ' text=' + text);
+                      // Logger.log('headingNumer=' + headingNumer + ' linkNumber=' + linkNumber);
+
+                      let targetHeadingNumber;
+                      if (headingNumer.charAt(headingNumer.length - 1) === '.') {
+                        // targetHeadingNumber = headingNumer.slice(0, -1);
+                        targetHeadingNumber = withoutDots === true ? headingNumer.slice(0, -1) : headingNumer;
+                      } else {
+                        // targetHeadingNumber = headingNumer;
+                        targetHeadingNumber = withoutDots === true ? headingNumer : headingNumer + '.';
+                      }
+                      if (linkNumber != targetHeadingNumber) {
+                        newText = text.replace(linkNumber, targetHeadingNumber);
+                        // Logger.log('newText=' + newText + ' text=' + text);
                         getIndexFlag = true;
                       }
                     } else {
@@ -208,9 +220,9 @@ function changeAllLinks(element, allHeadingsObj, infoLinksObj, updateNumbers, re
 
 
                 }
-              } else {
-                //Logger.log('DONT UPDATE');
-              }
+              // } else {
+              //   //Logger.log('DONT UPDATE');
+              // }
             } else if (markInternalHeadingLinks === true) {
               getIndexFlag = true;
             }
@@ -247,7 +259,7 @@ function changeAllLinks(element, allHeadingsObj, infoLinksObj, updateNumbers, re
     if (arrayTypes.includes(elementType)) {
       numChildren = element.getNumChildren();
       for (let i = 0; i < numChildren; i++) {
-        changeAllLinks(element.getChild(i), allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks);
+        changeAllLinks(element.getChild(i), allHeadingsObj, infoLinksObj, updateNumbers, resetFullLinkText, markInternalHeadingLinks, withoutDots);
       }
     }
   }

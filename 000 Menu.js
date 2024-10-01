@@ -25,7 +25,12 @@ function Menu_HePaNumbering() {
     .addSubMenu(DocumentApp.getUi().createMenu('Configure ignored text')
       .addItem('Show current setting', 'ignoredTextShowCurrentSetting')
       .addItem('Edit setting', 'ignoredTextEditSetting')
-      .addItem('Restore default', 'ignoredTextRestoreDefault'));
+      .addItem('Restore default', 'ignoredTextRestoreDefault'))
+    .addSeparator();
+
+  greenCheckboxMenuHelper(subMenuStyles, tryToRetrieveProperties = true, 'withoutDots', withWithoutDotsStyles, 'withWithoutDotsStyles', 'WITH_WITHOUT_DOTS_SETTINGS');
+
+
 
   let selectedStyleMarker = '';
   let menuItemText;
