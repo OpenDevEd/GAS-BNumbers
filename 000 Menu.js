@@ -83,8 +83,8 @@ function Menu_HePaNumbering() {
     .addSeparator()
     .addItem('Move ⟦…⟧ end notes into place (single paragraph)', 'moveParagraphNotes_afterRefs_tablesAndLists_single')
     .addItem('Move ⟦…⟧ end notes into place (multiple paragraphs)', 'moveParagraphNotes_afterRefs_tablesAndLists_multiple')
-    .addItem('Format notes (purple text)', 't')
-    .addItem('Format notes (yellow highlight)', 't')
+    .addItem('Format notes (purple text)', 'setPurpleForegroundNotes')
+    .addItem('Format notes (yellow highlight)', 'setYellowBackgroundNotes')
 
   const menu = DocumentApp.getUi().createMenu('Heading & paragraph numbering')
     .addItem('nha Add/update heading numbers and links', 'doNumberHeadingsAndLinks')

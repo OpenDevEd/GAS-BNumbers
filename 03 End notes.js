@@ -6,21 +6,34 @@ function moveParagraphNotes_afterRefs_tablesAndLists_multiple() {
   moveParagraphNotes_afterRefs_tablesAndLists(true);
 }
 
+function notesExistenceCheck(body) {
+  var DIVIDER_RE_DOC = "^[ \t\n\r\f\v]*⟦\/Notes\/⟧[ \t\n\r\f\v]*";
+  const dividerEl = body.findText(DIVIDER_RE_DOC);
+  if (dividerEl == null) {
+    alert("Please place the notes at the end of your document, using ⟦/Notes/⟧ to indicate the start of the notes.");
+    return { status: false };
+  } else {
+    return { status: true, dividerEl};
+  }
+}
+
 function moveParagraphNotes_afterRefs_tablesAndLists(multiple) {
   var body = DocumentApp.getActiveDocument().getBody();
 
   var lastIndex = body.getNumChildren() - 1;
 
   // Regex
-  var DIVIDER_RE = "^[ \t\n\r\f\v]*⟦\/Notes\/⟧[ \t\n\r\f\v]*";
+  var DIVIDER_RE = /^\s*⟦\/Notes\/⟧\s*$/;
   var MARKER_RE = /^\s*⟦(\d+)⟧/;
   var NOTE_RE = /^\s*⟦(\d+)⟧\s*.*$/;
 
-  const dividerFlag = body.findText(DIVIDER_RE);
-  if (dividerFlag == null) {
-    alert("Please place the notes at the end of your document, using ⟦/Notes/⟧ to indicate the start of the notes.");
-    return 0;
-  }
+  // const dividerFlag = body.findText(DIVIDER_RE_DOC);
+  // if (dividerFlag == null) {
+  //   alert("Please place the notes at the end of your document, using ⟦/Notes/⟧ to indicate the start of the notes.");
+  //   return 0;
+  // }
+  const { status } = notesExistenceCheck(body);
+  if (!status) return 0;
 
   // 1) Traverse in reading order; collect paragraphs & list items, split by divider
   var before = []; // elements before divider (Paragraph or ListItem)
@@ -57,7 +70,7 @@ function moveParagraphNotes_afterRefs_tablesAndLists(multiple) {
       nnum = nm[1];
       if (!notesByNum[nnum]) notesByNum[nnum] = [];
     }
-      notesByNum[nnum].push(nel);
+    notesByNum[nnum].push(nel);
   }
 
   // 4) Process referenced elements bottom-up (stable indices)
@@ -101,7 +114,7 @@ function moveParagraphNotes_afterRefs_tablesAndLists(multiple) {
         if (noteContainer.getType() === DocumentApp.ElementType.BODY_SECTION && lastIndex === noteContainer.getChildIndex(noteEl)) {
           // noteEl.setText(" ");
           noteEl.clear();
-        }else{
+        } else {
           noteContainer.removeChild(noteEl);
         }
       }
@@ -141,7 +154,7 @@ function walkContainer_(container, state, before, after, DIVIDER_RE) {
       type === DocumentApp.ElementType.LIST_ITEM) {
       var el = (type === DocumentApp.ElementType.PARAGRAPH) ? ch.asParagraph() : ch.asListItem();
       var txt = getElementText_(el) || '';
-      if (RegExp(DIVIDER_RE).test(txt)) {
+      if (DIVIDER_RE.test(txt)) {
         state.after = true; // everything after this in reading order goes to 'after'
         continue;           // we don't need to store the divider itself
       }
