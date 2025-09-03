@@ -79,7 +79,12 @@ function Menu_HePaNumbering() {
     .addItem('psnr Paragraph/sentence numbers remove', 'paraSenNumRemove')
     .addSeparator()
     .addItem('psnm Paragraph/sentence numbers minify', 'minifyParaSenMarker')
-    .addItem('psnshow Paragraph/sentence numbers - restore size', 'maxifyParaSenMarker');
+    .addItem('psnshow Paragraph/sentence numbers - restore size', 'maxifyParaSenMarker')
+    .addSeparator()
+    .addItem('Move ⟦…⟧ end notes into place (single paragraph)', 'moveParagraphNotes_afterRefs_tablesAndLists_single')
+    .addItem('Move ⟦…⟧ end notes into place (multiple paragraphs)', 'moveParagraphNotes_afterRefs_tablesAndLists_multiple')
+    .addItem('Format notes (purple text)', 't')
+    .addItem('Format notes (yellow highlight)', 't')
 
   const menu = DocumentApp.getUi().createMenu('Heading & paragraph numbering')
     .addItem('nha Add/update heading numbers and links', 'doNumberHeadingsAndLinks')
