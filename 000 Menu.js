@@ -75,6 +75,7 @@ function Menu_HePaNumbering() {
 
   const submenu_para = DocumentApp.getUi().createMenu('Paragraphs')
     .addItem('pna Paragraph numbers add, with  ⟦ and ⟧', 'paraNumAdd')
+    .addItem('pnr Paragraph numbers remove', 'paraNumRemove')
     .addItem('psna Paragraph/sentence numbers add, with ⟦ and ⟧', 'paraSenNumAdd')
     .addItem('psnr Paragraph/sentence numbers remove', 'paraSenNumRemove')
     .addSeparator()

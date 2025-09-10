@@ -15,6 +15,12 @@ function paraSenNumAdd() {
 function paraSenNumRemove() {
   sequentialNumbers(false, true, 0);
 }
+// Menu item Paragraphs -> 'pnr Paragraph numbers remove'
+// Removes paragraph numbers.
+function paraNumRemove() {
+  sequentialNumbers(false, false, 0);
+}
+
 
 // Menu item Paragraphs -> 'psnm Paragraph/sentence numbers minify'
 // Applies font size 1pt, white colour, and empty background to paragraph/sentence numbers.

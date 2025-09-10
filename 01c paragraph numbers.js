@@ -233,7 +233,18 @@ function sequentialNumbers(add, addSen, numberstyle) {
     }
     // End. Paragraphs
   } else {
+    // Remove everywhere (para and sentence)
     var removeRegEx = marker1 + "[0-9]+(⇒[0-9]+)?" + marker2 + " ?";
-    doc.replaceText(removeRegEx, '');
+    if (addSen) {
+      doc.replaceText(removeRegEx, '');
+    } else {
+      removeRegEx = "^" + removeRegEx;
+      // patt = new RegExp();
+      for (var i in p) {
+        // Note: With nexted lists the numbering works, but the list style may change from bulleted to numbered.
+        var e = p[i];
+        e = e.replaceText(removeRegEx, "");
+      };
+    }
   }
 }
