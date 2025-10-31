@@ -158,11 +158,10 @@ function changeAllLinks(element, allHeadingsObj, infoLinksObj, updateNumbers, re
       partAttributes = element.getAttributes(indices[i]);
 
       if (partAttributes.LINK_URL) {
-
         getIndexFlag = false;
 
-        if (/^#heading=/i.test(partAttributes.LINK_URL)) {
-          result = /^#heading=(.+)/i.exec(partAttributes.LINK_URL);
+        if (/^[?#].*heading=/i.test(partAttributes.LINK_URL)) {
+          result = /#heading=(.+)/i.exec(partAttributes.LINK_URL);
           headingIdLink = result[1];
           //Logger.log('internal headingIdLink=' + headingIdLink);
 

@@ -1,4 +1,8 @@
-function onOpen() {
+function onInstall(e) {
+  onOpen(e);
+}
+
+function onOpen(e) {
   Menu_HePaNumbering().addToUi();
 }
 
